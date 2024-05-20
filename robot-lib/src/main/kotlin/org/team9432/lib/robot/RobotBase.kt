@@ -188,10 +188,10 @@ abstract class RobotBase protected constructor(): AutoCloseable {
         private var suppressExitWarning = false
 
         /** Run the robot main loop.  */
-        private fun <T: RobotBase> runRobot(robotSupplier: Supplier<T>) {
+        private fun runRobot(robotSupplier: Supplier<RobotBase>) {
             println("********** Robot program starting **********")
 
-            val robot: T
+            val robot: RobotBase
             try {
                 robot = robotSupplier.get()
             } catch (throwable: Throwable) {
@@ -321,7 +321,11 @@ abstract class RobotBase protected constructor(): AutoCloseable {
                     Thread.currentThread().interrupt()
                 }
             } else {
-                runRobot(robotSupplier)
+                runBlocking(RIODispatcher) {
+                    coroutineScope = this
+                    runRobot(robotSupplier)
+                }
+                HAL.exitMain()
             }
 
             HAL.shutdown()
