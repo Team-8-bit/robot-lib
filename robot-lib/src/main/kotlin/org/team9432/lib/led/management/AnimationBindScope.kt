@@ -3,7 +3,6 @@ package org.team9432.lib.led.management
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.team9432.lib.coroutines.SuspendFunction
-import org.team9432.lib.robot.RobotBase
 
 /** Binds animations to given boolean conditions. Schedules and ends them as needed when [update] is called. */
 class AnimationBindScope private constructor(private val enabled: () -> Boolean) {
@@ -79,7 +78,7 @@ class AnimationBindScope private constructor(private val enabled: () -> Boolean)
         val animationReference = animation ?: return
 
         if (enabled) {
-            job = RobotBase.coroutineScope.launch {
+            job = AnimationManager.coroutineScope.launch {
                 animationReference.invoke()
             }
         } else {
