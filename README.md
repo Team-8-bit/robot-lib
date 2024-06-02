@@ -23,6 +23,7 @@ _Thanks to these teams and organizations for providing open-source code to take 
 - Team 4481's led color classes
 - Team 3847's vision filtering
 - Team 5190's kotlin library
+- Team 2471's kotlin command scheduler
 
 ---
 ![Team Logo](https://github.com/Team-8-bit/2024-Sonic/assets/87742096/9f2b265a-bd20-4c62-a7e0-9c9973b29a20)

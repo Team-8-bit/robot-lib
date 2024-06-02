@@ -40,18 +40,18 @@ class KXboxController(
     val leftTriggerAxisRaw get() = getRawAxis(Axis.LEFT_TRIGGER.value)
     val rightTriggerAxisRaw get() = getRawAxis(Axis.RIGHT_TRIGGER.value)
 
-    val leftBumper get() = KTrigger { getRawButton(Button.LEFT_BUMPER.value) }
-    val rightBumper get() = KTrigger { getRawButton(Button.RIGHT_BUMPER.value) }
-    val leftStick get() = KTrigger { getRawButton(Button.LEFT_STICK.value) }
-    val rightStick get() = KTrigger { getRawButton(Button.RIGHT_STICK.value) }
-    val leftTrigger get() = KTrigger { leftTriggerAxisRaw > triggerButtonDistance }
-    val rightTrigger get() = KTrigger { rightTriggerAxisRaw > triggerButtonDistance }
-    val a get() = KTrigger { getRawButton(Button.A.value) }
-    val b get() = KTrigger { getRawButton(Button.B.value) }
-    val x get() = KTrigger { getRawButton(Button.X.value) }
-    val y get() = KTrigger { getRawButton(Button.Y.value) }
-    val back get() = KTrigger { getRawButton(Button.BACK.value) }
-    val start get() = KTrigger { getRawButton(Button.START.value) }
+    val leftBumper get() = Trigger { getRawButton(Button.LEFT_BUMPER.value) }
+    val rightBumper get() = Trigger { getRawButton(Button.RIGHT_BUMPER.value) }
+    val leftStick get() = Trigger { getRawButton(Button.LEFT_STICK.value) }
+    val rightStick get() = Trigger { getRawButton(Button.RIGHT_STICK.value) }
+    val leftTrigger get() = Trigger { leftTriggerAxisRaw > triggerButtonDistance }
+    val rightTrigger get() = Trigger { rightTriggerAxisRaw > triggerButtonDistance }
+    val a get() = Trigger { getRawButton(Button.A.value) }
+    val b get() = Trigger { getRawButton(Button.B.value) }
+    val x get() = Trigger { getRawButton(Button.X.value) }
+    val y get() = Trigger { getRawButton(Button.Y.value) }
+    val back get() = Trigger { getRawButton(Button.BACK.value) }
+    val start get() = Trigger { getRawButton(Button.START.value) }
 
 
     private fun Double.applyDeadband() = if (abs(this) > joystickDeadband) this else 0.0

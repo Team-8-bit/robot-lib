@@ -1,7 +1,6 @@
 package org.team9432.lib.wrappers.neo
 
 import edu.wpi.first.math.geometry.Rotation2d
-import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 import org.team9432.lib.wrappers.Spark
@@ -23,7 +22,7 @@ class LoggedNeo(val config: Config) {
 
     fun updateAndRecordInputs(): LoggedNeoIO.NEOIOInputs {
         io.updateInputs(inputs)
-        Logger.processInputs(config.logName, inputs)
+//        Logger.processInputs(config.logName, inputs)
         return inputs
     }
 

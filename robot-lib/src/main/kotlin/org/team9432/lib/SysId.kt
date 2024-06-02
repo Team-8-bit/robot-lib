@@ -4,7 +4,6 @@ import edu.wpi.first.units.Units.Seconds
 import edu.wpi.first.units.Units.Volts
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction
-import org.littletonrobotics.junction.Logger
 import org.team9432.lib.wrappers.neo.LoggedNeo
 import edu.wpi.first.wpilibj2.command.Command as WPICommand
 import edu.wpi.first.wpilibj2.command.Subsystem as WPISubsystem
@@ -24,7 +23,7 @@ class KSysIdConfig(
     rampRate?.let { Volts.of(it).per(Seconds.of(1.0)) },
     stepVoltage?.let { Volts.of(it) },
     timeout?.let { Seconds.of(it) },
-    { state -> Logger.recordOutput("SysIdState", state.toString()) }
+    { state -> /*Logger.recordOutput("SysIdState", state.toString())*/ }
 )
 
 /** Sysid mechanism wrapper that hides the Java unit library and some options we don't use. */

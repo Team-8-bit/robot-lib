@@ -4,8 +4,6 @@ import edu.wpi.first.hal.DriverStationJNI
 import edu.wpi.first.hal.FRCNetComm.tInstances
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
-import edu.wpi.first.hal.HALUtil
-import edu.wpi.first.hal.NotifierJNI
 import edu.wpi.first.wpilibj.DSControlWord
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
@@ -13,10 +11,19 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj.util.WPILibVersion
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.team9432.lib.State.alliance
+import org.team9432.lib.commandbased.ActionManager
+import org.team9432.lib.commandbased.input.Trigger
 import org.team9432.lib.coroutines.CoroutineNotifier
-import kotlin.time.Duration.Companion.microseconds
+import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.milliseconds
+
+lateinit var RobotScope: CoroutineScope
+    private set
 
 open class CoroutineRobot: RobotBase() {
     @Volatile
@@ -41,10 +48,14 @@ open class CoroutineRobot: RobotBase() {
     }
 
     override fun startCompetition() = runBlocking {
+        RobotScope = this
+
         // Report the use of the Kotlin Language for "FRC Usage Report" statistics
         HAL.report(tResourceType.kResourceType_Language, tInstances.kLanguage_Kotlin, 0, WPILibVersion.Version)
 
         val notifier = CoroutineNotifier(20.milliseconds)
+
+        launch { ActionManager.run() }
 
         // Robot code initialization
         init()
@@ -89,6 +100,9 @@ open class CoroutineRobot: RobotBase() {
                 Mode.TEST -> DriverStationJNI.observeUserProgramTest()
             }
 
+            Trigger.poll()
+            periodics.forEach { it.invoke() }
+            DriverStation.getAlliance().getOrNull()?.let { alliance = it }
             periodic()
 
             SmartDashboard.updateValues()
@@ -102,6 +116,12 @@ open class CoroutineRobot: RobotBase() {
         }
 
         notifier.close()
+    }
+
+    private val periodics = mutableListOf<() -> Unit>()
+
+    fun addPeriodic(periodic: () -> Unit) {
+        periodics.add(periodic)
     }
 
     override fun endCompetition() {

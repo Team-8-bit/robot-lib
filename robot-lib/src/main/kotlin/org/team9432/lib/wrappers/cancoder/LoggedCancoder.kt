@@ -1,7 +1,6 @@
 package org.team9432.lib.wrappers.cancoder
 
 import edu.wpi.first.math.geometry.Rotation2d
-import org.littletonrobotics.junction.Logger
 import org.team9432.lib.State
 import org.team9432.lib.State.Mode.*
 
@@ -19,7 +18,7 @@ class LoggedCancoder(private val config: Config) {
 
     fun updateAndRecordInputs(): LoggedCancoderIO.CancoderIOInputs {
         io.updateInputs(inputs)
-        Logger.processInputs(config.logName, inputs)
+//        Logger.processInputs(config.logName, inputs)
         return inputs
     }
 
