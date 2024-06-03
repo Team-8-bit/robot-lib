@@ -1,5 +1,7 @@
 package org.team9432.lib.commandbased
 
+import edu.wpi.first.networktables.NetworkTable
+import edu.wpi.first.networktables.NetworkTableInstance
 import kotlinx.coroutines.Job
 
 /**
@@ -12,6 +14,8 @@ import kotlinx.coroutines.Job
  * generally remain encapsulated and not be shared by other parts of the robot.
  */
 abstract class Resource(val name: String) {
+    val table: NetworkTable = NetworkTableInstance.getDefault().getTable("R esources/$name")
+
     internal var activeJob: Job? = null
 
     var hasDefault = true
