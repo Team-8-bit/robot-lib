@@ -1,14 +1,13 @@
-package org.team9432.lib.commandbased.input
+package org.team9432.lib.input
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
-import org.team9432.lib.commandbased.Action
+import org.team9432.lib.resources.Action
 import org.team9432.lib.robot.RobotScope
 import java.util.function.BooleanSupplier
 
-@OptIn(DelicateCoroutinesApi::class)
 /**
  * This class provides an easy way to link commands to conditions.
  *

@@ -1,4 +1,4 @@
-package org.team9432.lib.commandbased
+package org.team9432.lib.resources
 
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.networktables.NetworkTableInstance

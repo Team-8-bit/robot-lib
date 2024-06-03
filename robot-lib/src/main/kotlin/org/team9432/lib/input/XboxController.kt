@@ -1,4 +1,4 @@
-package org.team9432.lib.commandbased.input
+package org.team9432.lib.input
 
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
@@ -8,7 +8,7 @@ import kotlin.math.pow
 import kotlin.math.withSign
 
 /** XboxController with Trigger factories for easier command binding. */
-class KXboxController(
+class XboxController(
     port: Int,
     private val joystickDeadband: Double = 0.2,
     private val squareJoysticks: Boolean = true,
