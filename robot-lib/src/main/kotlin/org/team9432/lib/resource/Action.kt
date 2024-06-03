@@ -1,4 +1,4 @@
-package org.team9432.lib.resources
+package org.team9432.lib.resource
 
 import kotlinx.coroutines.CoroutineScope
 

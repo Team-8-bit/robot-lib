@@ -1,3 +1,4 @@
+val kotlinVersion: String by project
 val kspVersion: String by project
 val wpiLibVersion: String by project
 val frcYear: String by project
@@ -28,7 +29,8 @@ dependencies {
     // Misc.
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1-Beta")
 
-    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test", kotlinVersion))
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }
 
 tasks.test {
@@ -36,6 +38,7 @@ tasks.test {
 }
 
 repositories {
+    mavenCentral()
     maven { setUrl("https://frcmaven.wpi.edu/artifactory/release/") }
     maven { setUrl("https://plugins.gradle.org/m2/") }
     maven { setUrl("https://maven.ctr-electronics.com/release/") }

@@ -6,7 +6,7 @@ This package contains library utilities that can be used across multiple robots 
 
 ### Notable Packages
 
-- [`org.team9432.lib.commandbased`](resources) A Kotlin implementation of the WPILib command-based subsystem manager
+- [`org.team9432.lib.commandbased`](resource) A Kotlin implementation of the WPILib command-based subsystem manager
   with custom features.
 - [`org.team9432.lib.led`](led) A custom led management library that allows for complex control and patterns using
   kotlin coroutines.

@@ -1,4 +1,4 @@
-package org.team9432.lib.resources
+package org.team9432.lib.resource
 
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.networktables.NetworkTableInstance
@@ -14,9 +14,17 @@ import kotlinx.coroutines.Job
  * generally remain encapsulated and not be shared by other parts of the robot.
  */
 abstract class Resource(val name: String) {
-    val table: NetworkTable = NetworkTableInstance.getDefault().getTable("R esources/$name")
+    val table: NetworkTable by lazy { NetworkTableInstance.getDefault().getTable("Resources/$name") }
 
     internal var activeJob: Job? = null
+    var currentActionName: String? = null
+        internal set
+
+    val isFree: Boolean
+        get() = activeJob == null
+
+    val isInUse: Boolean
+        get() = activeJob != null
 
     var hasDefault = true
 

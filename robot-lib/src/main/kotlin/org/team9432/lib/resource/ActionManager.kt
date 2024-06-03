@@ -1,19 +1,25 @@
-package org.team9432.lib.resources
+package org.team9432.lib.resource
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlin.coroutines.*
 
 internal object ActionManager {
+    private const val DEBUG = false
+
     private val messageChannel = Channel<Message>(capacity = Channel.UNLIMITED)
 
-    suspend fun run() {
+    private lateinit var actionScope: CoroutineScope
+
+    suspend fun run() = coroutineScope {
+        actionScope = this
+
         for (message in messageChannel) {
             handleMessage(message)
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun handleMessage(message: Message) {
         when (message) {
             is Message.ScheduleAction -> {
@@ -30,9 +36,7 @@ internal object ActionManager {
                 // verify that all conflicting subsystems can be canceled
                 if (!message.cancelConflicts && conflictingResources.isNotEmpty()) {
                     message.continuation.resumeWithException(
-                        CancellationException(
-                            "Action ${message.name} is not allowed to cancel conflicts that are using { ${conflictingResources.joinToString { it.name }} }"
-                        )
+                        CancellationException("Action ${message.name} is not allowed to cancel conflicts that are using { ${conflictingResources.joinToString { it.name }} }")
                     )
                     return
                 }
@@ -40,39 +44,47 @@ internal object ActionManager {
                 val conflictingJobs = conflictingResources.map { it.activeJob!! }
 
                 // spawn action coroutine
-                val actionJob = CoroutineScope(message.callerContext).launch(Requirements(allResources), CoroutineStart.ATOMIC) {
-                    try {
-                        println("Resources { ${thisResources.joinToString { it.name }} } are being used by ${message.name}")
-                        if (message.name == null || message.name.toString() == "null") {
-                            println("message.name = null: ${message.action}")
+                val actionJob = actionScope.launch {
+                    val job = coroutineContext[Job]
+                    withContext(message.callerContext) {
+                        launch(Requirements(allResources), CoroutineStart.ATOMIC) {
+                            try {
+                                printDebug("Resources { ${thisResources.joinToString { it.name }} } are being used by ${message.name}")
+                                if (message.name == null || message.name.toString() == "null") {
+                                    printDebug("message.name = null: ${message.action}")
+                                }
+
+                                // Cancel conflicting jobs. It is critical that coroutines must not complete until it's conflict's jobs have finished execution
+                                withContext(NonCancellable) {
+                                    conflictingJobs.forEach { it.cancel() }
+                                    conflictingJobs.joinAll()
+                                }
+
+                                // run the action
+                                coroutineScope { message.action.invoke(this) }
+
+                                // resume calling coroutine
+                                message.continuation.resume(Unit)
+
+                            } catch (exception: Throwable) {
+                                // pass exception to calling coroutine
+                                message.continuation.resumeWithException(exception)
+                            } finally {
+                                printDebug("Freeing subsystems { ${thisResources.joinToString { it.name }} } used by ${message.name}")
+
+                                // tell the scheduler that the action job has finished executing
+                                messageChannel.trySend(Message.ReleaseResources(thisResources, job!!))
+                            }
                         }
-
-                        // Cancel conflicting jobs. It is critical that coroutines must not complete until it's conflict's jobs have finished execution
-                        withContext(NonCancellable) {
-                            conflictingJobs.forEach { it.cancel() }
-                            conflictingJobs.joinAll()
-                        }
-
-                        // run the action
-                        coroutineScope { message.action.invoke(this) }
-
-                        // resume calling coroutine
-                        message.continuation.resume(Unit)
-
-                    } catch (exception: Throwable) {
-                        // pass exception to calling coroutine
-                        message.continuation.resumeWithException(exception)
-                    } finally {
-                        println("Freeing subsystems { ${thisResources.joinToString { it.name }} } used by ${message.name}")
-
-                        // tell the scheduler that the action job has finished executing
-                        messageChannel.trySend(Message.ReleaseResources(thisResources, coroutineContext[Job]!!))
                     }
                 }
 
                 // write over state - future actions that use these subsystems will cancel and wait for the action job to complete
                 // only writes newly required subsystems and does not overwrite parent requirements
-                thisResources.forEach { it.activeJob = actionJob }
+                thisResources.forEach {
+                    it.activeJob = actionJob
+                    it.currentActionName = message.name
+                }
             }
 
             is Message.CancelActiveAction -> message.resource.activeJob?.cancel()
@@ -82,15 +94,20 @@ internal object ActionManager {
                     .filter { it.activeJob === message.job }
                     .forEach { resource ->
                         resource.activeJob = null
+                        resource.currentActionName = null
+                        printDebug("released ${resource.name}")
 
                         if (resource.hasDefault) {
-                            GlobalScope.launch {
+                            actionScope.launch {
                                 useResources(setOf(resource), "Default", false) { resource.default() }
                             }
                         }
                     }
             }
         }
+    }
+
+    private fun printDebug(message: String) = if (DEBUG) println(message) else { /* no-op */
     }
 
     suspend fun useResources(

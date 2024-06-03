@@ -1,10 +1,9 @@
 package org.team9432.lib.input
 
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
-import org.team9432.lib.resources.Action
+import org.team9432.lib.resource.Action
 import org.team9432.lib.robot.RobotScope
 import java.util.function.BooleanSupplier
 

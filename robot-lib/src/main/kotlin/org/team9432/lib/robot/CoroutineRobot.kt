@@ -16,9 +16,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.team9432.lib.State.alliance
-import org.team9432.lib.resources.ActionManager
-import org.team9432.lib.input.Trigger
 import org.team9432.lib.coroutines.CoroutineNotifier
+import org.team9432.lib.input.Trigger
+import org.team9432.lib.resource.ActionManager
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.milliseconds
 
