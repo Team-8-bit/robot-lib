@@ -44,38 +44,33 @@ internal object ActionManager {
                 val conflictingJobs = conflictingResources.map { it.activeJob!! }
 
                 // spawn action coroutine
-                val actionJob = actionScope.launch {
-                    val job = coroutineContext[Job]
-                    withContext(message.callerContext) {
-                        launch(Requirements(allResources), CoroutineStart.ATOMIC) {
-                            try {
-                                printDebug("Resources { ${thisResources.joinToString { it.name }} } are being used by ${message.name}")
-                                if (message.name == null || message.name.toString() == "null") {
-                                    printDebug("message.name = null: ${message.action}")
-                                }
+                val actionJob = actionScope.launch(message.callerContext + Requirements(allResources), CoroutineStart.ATOMIC) {
+                    val job = coroutineContext[Job]!!
 
-                                // Cancel conflicting jobs. It is critical that coroutines must not complete until it's conflict's jobs have finished execution
-                                withContext(NonCancellable) {
-                                    conflictingJobs.forEach { it.cancel() }
-                                    conflictingJobs.joinAll()
-                                }
-
-                                // run the action
-                                coroutineScope { message.action.invoke(this) }
-
-                                // resume calling coroutine
-                                message.continuation.resume(Unit)
-
-                            } catch (exception: Throwable) {
-                                // pass exception to calling coroutine
-                                message.continuation.resumeWithException(exception)
-                            } finally {
-                                printDebug("Freeing subsystems { ${thisResources.joinToString { it.name }} } used by ${message.name}")
-
-                                // tell the scheduler that the action job has finished executing
-                                messageChannel.trySend(Message.ReleaseResources(thisResources, job!!))
-                            }
+                    try {
+                        printDebug("Resources { ${thisResources.joinToString { it.name }} } are being used by ${message.name}")
+                        if (message.name == null || message.name.toString() == "null") {
+                            printDebug("message.name = null: ${message.action}")
                         }
+
+                        // Cancel conflicting jobs. It is critical that coroutines must not complete until it's conflict's jobs have finished execution
+                        withContext(NonCancellable) {
+                            conflictingJobs.forEach { it.cancel() }
+                            conflictingJobs.joinAll()
+                        }
+
+                        // run the action
+                        coroutineScope { message.action.invoke(this) }
+
+                        // resume calling coroutine
+                        message.continuation.resume(Unit)
+
+                    } catch (exception: Throwable) {
+                        // pass exception to calling coroutine
+                        message.continuation.resumeWithException(exception)
+                    } finally {
+                        // tell the scheduler that the action job has finished executing
+                        messageChannel.trySend(Message.ReleaseResources(thisResources, job))
                     }
                 }
 
@@ -86,8 +81,6 @@ internal object ActionManager {
                     it.currentActionName = message.name
                 }
             }
-
-            is Message.CancelActiveAction -> message.resource.activeJob?.cancel()
 
             is Message.ReleaseResources -> {
                 message.resources
@@ -141,8 +134,6 @@ internal object ActionManager {
             val continuation: CancellableContinuation<Unit>,
         ): Message()
 
-        class CancelActiveAction(val resource: Resource): Message()
-
         class ReleaseResources(val resources: Set<Resource>, val job: Job): Message()
     }
 
@@ -165,5 +156,5 @@ internal object ActionManager {
  * the code inside the nested [use] call's [action] will effectively be using subsystems A, B, and C, instead of
  * cancelling itself.
  */
-suspend fun use(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = true, action: Action) =
+suspend fun use(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = false, action: Action) =
     ActionManager.useResources(resources.toSet(), name, cancelConflicts, action)
