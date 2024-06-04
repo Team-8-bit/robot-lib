@@ -92,7 +92,7 @@ internal object ActionManager {
 
                         if (resource.hasDefault) {
                             actionScope.launch {
-                                useResources(setOf(resource), "Default", false) { resource.default() }
+                                use(resource, name = "Default", cancelConflicts = false) { resource.default() }
                             }
                         }
                     }
@@ -103,7 +103,7 @@ internal object ActionManager {
     private fun printDebug(message: String) = if (DEBUG) println(message) else { /* no-op */
     }
 
-    suspend fun useResources(
+    internal suspend fun useResources(
         resources: Set<Resource>,
         name: String?,
         cancelConflicts: Boolean,
@@ -149,10 +149,10 @@ internal object ActionManager {
  * Attempts to run the provided [action] with exclusive access to all provided [resources].
  *
  * If [cancelConflicts] is set to false and one of the [resources] is being used by another coroutine,
- * an exception will be thrown and the provided [action] will not be invoked. Otherwise, all coroutines requiring
- * any of [resources] will be cancelled and completed before the [action] is invoked.
+ * an exception will be thrown and the provided [action] will not be invoked. If it is set to true, all coroutines requiring
+ * any of the [resources] will be cancelled and completed before the [action] is invoked.
  *
- * Use calls are re-entrant, meaning if a coroutine is using subsystems A and B calls [use] with subsystems B and C,
+ * Use calls are re-entrant, meaning if a coroutine using subsystems A and B calls [use] with subsystems B and C,
  * the code inside the nested [use] call's [action] will effectively be using subsystems A, B, and C, instead of
  * cancelling itself.
  */

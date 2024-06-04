@@ -23,8 +23,9 @@ internal class ActionAssignment {
 
         // Make sure the resource is being used
         assertTrue(resource.isInUse)
-        // Wait 2ms for it to finish
-        testScheduler.advanceTimeBy(2)
+        // Advance 1ms for it to finish
+        testScheduler.advanceTimeBy(1)
+        testScheduler.runCurrent()
         // Make sure the resource is free
         assertTrue(resource.isFree)
     }
@@ -38,7 +39,7 @@ internal class ActionAssignment {
         val resourceThree = object: Resource("Resource Three") {}
 
         launch { use(resourceOne, resourceTwo, name = "One Two Action") { delay(1) } }
-        launch { use(resourceThree, name = "Three Action") { delay(3) } }
+        launch { use(resourceThree, name = "Three Action") { delay(2) } }
         testScheduler.runCurrent()
 
         // Make sure the correct resources are being used in the correct places
@@ -47,15 +48,17 @@ internal class ActionAssignment {
         assertTrue { resourceOne.currentActionName == "One Two Action" }
         assertTrue { resourceThree.currentActionName == "Three Action" && resourceThree.isInUse }
 
-        // Wait 2ms for the first task to finish
-        testScheduler.advanceTimeBy(2)
+        // Advance 1ms for the first task to finish
+        testScheduler.advanceTimeBy(1)
+        testScheduler.runCurrent()
 
         // Make sure the correct resources are free
         assertTrue { resourceOne.isFree && resourceTwo.isFree }
         assertTrue { resourceThree.isInUse }
 
-        // Wait 2ms more for the second task to finish
-        testScheduler.advanceTimeBy(2)
+        // Advance 1ms more for the second task to finish
+        testScheduler.advanceTimeBy(1)
+        testScheduler.runCurrent()
 
         assertTrue { resourceOne.isFree && resourceTwo.isFree && resourceThree.isFree }
     }
