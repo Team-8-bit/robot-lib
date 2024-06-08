@@ -5,14 +5,6 @@ import org.team9432.lib.unit.Time
 import org.team9432.lib.unit.inMilliseconds
 import java.util.concurrent.Executors
 
-
-val RIODispatcher = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
-
-fun CoroutineScope.rioLaunch(
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend CoroutineScope.() -> Unit,
-) = launch(RIODispatcher, start, block)
-
 /** A suspending function. */
 typealias SuspendFunction = suspend () -> Unit
 
