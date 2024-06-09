@@ -170,3 +170,6 @@ suspend fun useUntilCancelled(vararg resources: Resource, name: String? = null, 
         action.invoke(this)
         awaitCancellation()
     }
+
+suspend fun <T: Resource> T.use(name: String? = null, cancelConflicts: Boolean = false, action: suspend T.(CoroutineScope) -> Unit) =
+    use(this, name = name, cancelConflicts = cancelConflicts) { action(this) }
