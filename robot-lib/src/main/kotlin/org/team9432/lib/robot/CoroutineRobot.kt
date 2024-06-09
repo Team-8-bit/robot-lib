@@ -11,13 +11,11 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj.util.WPILibVersion
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.team9432.lib.State.alliance
 import org.team9432.lib.coroutines.CoroutineNotifier
 import org.team9432.lib.input.Trigger
+import org.team9432.lib.resource.Action
 import org.team9432.lib.resource.ActionManager
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.milliseconds
@@ -101,7 +99,7 @@ open class CoroutineRobot: RobotBase() {
             }
 
             Trigger.poll()
-            periodics.forEach { it.invoke() }
+            periodics.map { launch { it.invoke(this) } }.joinAll()
             DriverStation.getAlliance().getOrNull()?.let { alliance = it }
             periodic()
 
@@ -118,10 +116,12 @@ open class CoroutineRobot: RobotBase() {
         notifier.close()
     }
 
-    private val periodics = mutableListOf<() -> Unit>()
+    companion object {
+        private val periodics = mutableListOf<Action>()
 
-    fun addPeriodic(periodic: () -> Unit) {
-        periodics.add(periodic)
+        fun addPeriodic(periodic: Action) {
+            periodics.add(periodic)
+        }
     }
 
     override fun endCompetition() {
