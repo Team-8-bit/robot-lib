@@ -1,9 +1,7 @@
 package org.team9432.lib.led.management
 
-import org.team9432.lib.coroutines.SuspendFunction
-
 /** Class defining an animation. Subclasses should override the [runAnimation] for animation-specific code. */
-abstract class Animation(val section: Section): SuspendFunction {
+abstract class Animation(val section: Section): suspend () -> Unit {
     var priority: Int? = null
     var name: String = ""
 
