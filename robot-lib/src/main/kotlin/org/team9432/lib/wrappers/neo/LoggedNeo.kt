@@ -20,11 +20,10 @@ class LoggedNeo(val config: Config) {
         }
     }
 
-    fun updateAndRecordInputs(): LoggedNeoIO.NEOIOInputs {
-        io.updateInputs(inputs)
-//        Logger.processInputs(config.logName, inputs)
-        return inputs
-    }
+    fun getAngle(): Rotation2d = io.getAngle()
+    fun getAppliedVolts(): Double = io.getAppliedVolts()
+    fun getCurrentAmps(): Double = io.getCurrentAmps()
+    fun getVelocityRadPerSec(): Double = io.getVelocityRadPerSec()
 
     /** Run open loop at the specified voltage */
     fun setVoltage(volts: Double) = io.setVoltage(volts)

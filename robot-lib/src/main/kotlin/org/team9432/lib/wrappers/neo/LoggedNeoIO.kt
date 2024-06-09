@@ -3,26 +3,12 @@ package org.team9432.lib.wrappers.neo
 import edu.wpi.first.math.geometry.Rotation2d
 
 interface LoggedNeoIO {
-    open class NEOIOInputs(private val additionalQualifier: String = "") {
-        var angle = Rotation2d()
-        var appliedVolts = 0.0
-        var currentAmps = 0.0
-        var velocityRadPerSec = 0.0
+    open class NEOIOInputs(private val additionalQualifier: String = "")
 
-//        override fun toLog(table: LogTable) {
-//            table.kPut("${additionalQualifier}Angle", angle)
-//            table.kPut("${additionalQualifier}AppliedVolts", appliedVolts)
-//            table.kPut("${additionalQualifier}CurrentAmps", currentAmps)
-//            table.kPut("${additionalQualifier}VelocityRadPerSec", velocityRadPerSec)
-//        }
-//
-//        override fun fromLog(table: LogTable) {
-//            angle = table.kGet("${additionalQualifier}Angle", angle)
-//            appliedVolts = table.kGet("${additionalQualifier}AppliedVolts", appliedVolts)
-//            currentAmps = table.kGet("${additionalQualifier}CurrentAmps", currentAmps)
-//            velocityRadPerSec = table.kGet("${additionalQualifier}VelocityRadPerSec", velocityRadPerSec)
-//        }
-    }
+    fun getAngle(): Rotation2d = Rotation2d()
+    fun getAppliedVolts(): Double = 0.0
+    fun getCurrentAmps(): Double = 0.0
+    fun getVelocityRadPerSec(): Double = 0.0
 
     fun updateInputs(inputs: NEOIOInputs) {}
 
