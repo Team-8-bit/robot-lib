@@ -5,6 +5,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlin.coroutines.*
 
 internal object ActionManager {
+    const val DEFAULT_ACTION_NAME = "Default"
     private const val DEBUG = false
 
     private val messageChannel = Channel<Message>(capacity = Channel.UNLIMITED)
@@ -90,9 +91,10 @@ internal object ActionManager {
                         resource.currentActionName = null
                         printDebug("released ${resource.name}")
 
-                        if (resource.hasDefault) {
+                        resource.defaultAction?.let { defaultAction ->
+                            printDebug("running ${resource.name} default action")
                             actionScope.launch {
-                                use(resource, name = "Default", cancelConflicts = false) { resource.default() }
+                                useUntilCancelled(resource, name = DEFAULT_ACTION_NAME, cancelConflicts = false, action = defaultAction)
                             }
                         }
                     }
@@ -100,8 +102,7 @@ internal object ActionManager {
         }
     }
 
-    private fun printDebug(message: String) = if (DEBUG) println(message) else { /* no-op */
-    }
+    private fun printDebug(message: String) = if (DEBUG) println(message) else Unit /* no-op */
 
     internal suspend fun useResources(
         resources: Set<Resource>,
@@ -158,3 +159,14 @@ internal object ActionManager {
  */
 suspend fun use(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = false, action: Action) =
     ActionManager.useResources(resources.toSet(), name, cancelConflicts, action)
+
+/**
+ * Attempts to run the provided [action] with exclusive access to all provided [resources] until the parent coroutine is cancelled.
+ *
+ * See [use] for more information.
+ */
+suspend fun useUntilCancelled(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = false, action: Action) =
+    use(resources = resources, name = name, cancelConflicts = cancelConflicts) {
+        action.invoke(this)
+        awaitCancellation()
+    }

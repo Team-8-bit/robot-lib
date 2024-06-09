@@ -26,9 +26,13 @@ abstract class Resource(val name: String) {
     val isInUse: Boolean
         get() = activeJob != null
 
-    var hasDefault = true
+    val isRunningDefault: Boolean
+        get() = currentActionName == ActionManager.DEFAULT_ACTION_NAME
 
-    open suspend fun default() {
-        hasDefault = false
-    }
+    /**
+     * Default function to be called when the subsystem doesn't have another action. It will
+     * automatically require this resource. It will also only be called once between actions,
+     * and not upon resource creation.
+     */
+    open val defaultAction: Action? = null
 }
