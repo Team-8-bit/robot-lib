@@ -18,14 +18,12 @@ class LoggedNeoIOSim(config: LoggedNeo.Config): LoggedNeoIO {
 
     private var appliedVolts = 0.0
 
-    override fun updateInputs(inputs: LoggedNeoIO.NEOIOInputs) {
-        sim.update(0.02)
+//    sim.update(0.02)
 
-        inputs.angle = Rotation2d(sim.angularPositionRad)
-        inputs.velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(sim.angularVelocityRPM)
-        inputs.appliedVolts = appliedVolts
-        inputs.currentAmps = abs(sim.currentDrawAmps)
-    }
+    override fun getAngle() = Rotation2d(sim.angularPositionRad)
+    override fun getVelocityRadPerSec() = Units.rotationsPerMinuteToRadiansPerSecond(sim.angularVelocityRPM)
+    override fun getAppliedVolts() = appliedVolts
+    override fun getCurrentAmps() = abs(sim.currentDrawAmps)
 
     override fun setVoltage(volts: Double) {
         appliedVolts = MathUtil.clamp(volts, -12.0, 12.0)

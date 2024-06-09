@@ -13,12 +13,10 @@ class LoggedNeoIOReal(val config: LoggedNeo.Config): LoggedNeoIO {
         spark.applyConfig(config.sparkConfig)
     }
 
-    override fun updateInputs(inputs: LoggedNeoIO.NEOIOInputs) {
-        inputs.angle = Rotation2d.fromRotations(encoder.position) / config.gearRatio
-        inputs.velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(encoder.velocity) / config.gearRatio
-        inputs.appliedVolts = spark.appliedOutput * spark.busVoltage
-        inputs.currentAmps = spark.outputCurrent
-    }
+    override fun getAngle() = Rotation2d.fromRotations(encoder.position) / config.gearRatio
+    override fun getVelocityRadPerSec() = Units.rotationsPerMinuteToRadiansPerSecond(encoder.velocity) / config.gearRatio
+    override fun getAppliedVolts() = spark.appliedOutput * spark.busVoltage
+    override fun getCurrentAmps() = spark.outputCurrent
 
     override fun setVoltage(volts: Double) {
         spark.setVoltage(volts)
