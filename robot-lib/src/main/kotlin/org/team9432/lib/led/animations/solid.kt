@@ -1,11 +1,11 @@
 package org.team9432.lib.led.animations
 
-import org.team9432.lib.coroutines.delay
+import kotlinx.coroutines.delay
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.management.Animation
 import org.team9432.lib.led.management.Section
-import org.team9432.lib.unit.Time
-import org.team9432.lib.unit.seconds
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Instantly sets the section to the specified color.
@@ -17,7 +17,7 @@ import org.team9432.lib.unit.seconds
  */
 fun Section.solid(
     color: Color,
-    duration: Time = Integer.MAX_VALUE.seconds,
+    duration: Duration = Integer.MAX_VALUE.seconds,
 ) = object: Animation(this) {
     override suspend fun runAnimation() {
         colorset.applyToEach {

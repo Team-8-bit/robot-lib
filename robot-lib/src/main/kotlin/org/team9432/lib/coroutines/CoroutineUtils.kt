@@ -1,9 +1,7 @@
 package org.team9432.lib.coroutines
 
-import kotlinx.coroutines.*
-import org.team9432.lib.unit.Time
-import org.team9432.lib.unit.inMilliseconds
-import java.util.concurrent.Executors
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 /** A suspending function. */
 typealias SuspendFunction = suspend () -> Unit
@@ -32,9 +30,3 @@ fun runSequential(vararg operations: SuspendFunction): SuspendFunction = {
         operation.invoke()
     }
 }
-
-/* Waits a given time. */
-fun wait(time: Time): SuspendFunction = { delay(time) }
-
-/** Delay for a given [Time]. */
-suspend fun delay(time: Time) = delay(time.inMilliseconds.toLong())

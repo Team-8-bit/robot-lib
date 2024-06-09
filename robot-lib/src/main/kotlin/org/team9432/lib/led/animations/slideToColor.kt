@@ -1,11 +1,11 @@
 package org.team9432.lib.led.animations
 
-import org.team9432.lib.coroutines.delay
+import kotlinx.coroutines.delay
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.management.Animation
 import org.team9432.lib.led.management.Section
-import org.team9432.lib.unit.Time
-import org.team9432.lib.unit.milliseconds
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Slides a new color in from one side.
@@ -21,7 +21,7 @@ fun Section.slideToColor(
     color: Color,
     leadColor: Color = color,
     runReversed: Boolean = false,
-    timePerStep: Time = 20.milliseconds,
+    timePerStep: Duration = 20.milliseconds,
 ) = object: Animation(this) {
     override suspend fun runAnimation() {
         colorset.setCurrentlyFadingColor(null)
