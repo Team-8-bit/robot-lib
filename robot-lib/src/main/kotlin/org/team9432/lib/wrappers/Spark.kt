@@ -44,7 +44,7 @@ open class Spark(canID: Int, val name: String, motorType: MotorType): CANSparkBa
     }
 
     /** Applies a given setting to the spark until hasSucceeded returns true or until the given number of attempts is reached */
-    fun applyAndErrorCheck(settingName: String, runnable: () -> Unit, hasSucceeded: () -> Boolean, attempts: Int = 88): Boolean {
+    fun applyAndErrorCheck(settingName: String, runnable: () -> Unit, hasSucceeded: () -> Boolean, attempts: Int = 10): Boolean {
         for (i in 1..attempts) {
             runnable()
             if (hasSucceeded()) return true
@@ -55,7 +55,7 @@ open class Spark(canID: Int, val name: String, motorType: MotorType): CANSparkBa
     }
 
     /** Applies a given setting to the spark until it returns REVLibError.kOk or until the given number of attempts is reached */
-    fun applyAndErrorCheck(settingName: String, attempts: Int = 88, attempt: () -> REVLibError): Boolean {
+    fun applyAndErrorCheck(settingName: String, attempts: Int = 10, attempt: () -> REVLibError): Boolean {
         for (i in 1..attempts) {
             if (attempt() == REVLibError.kOk) return true
             else DriverStation.reportWarning("Retrying $settingName on $name (attempt $i/$attempts)", false)
