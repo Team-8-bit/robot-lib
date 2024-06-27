@@ -85,7 +85,8 @@ internal class DefaultActions {
         testScheduler.advanceTimeBy(1)
         testScheduler.runCurrent()
 
-        launch { use(resource, name = "Override Action", cancelConflicts = true) { delay(1) } }
+        // This should work without cancelConflicts being true
+        launch { use(resource, name = "Override Action", cancelConflicts = false) { delay(1) } }
         testScheduler.runCurrent()
 
         // Ensure default has been overridden

@@ -32,7 +32,7 @@ internal object ActionManager {
                 val allResources = message.requirements + parentResources
 
                 // find conflicting subsystems by checking weather or not they have an active job
-                val conflictingResources = thisResources.filter { it.activeJob != null }
+                val conflictingResources = thisResources.filter { it.activeJob != null && !it.isRunningDefault }
 
                 // verify that all conflicting subsystems can be canceled
                 if (!message.cancelConflicts && conflictingResources.isNotEmpty()) {
