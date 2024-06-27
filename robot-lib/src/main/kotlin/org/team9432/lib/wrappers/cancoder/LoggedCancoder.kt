@@ -1,8 +1,8 @@
 package org.team9432.lib.wrappers.cancoder
 
 import edu.wpi.first.math.geometry.Rotation2d
-import org.team9432.lib.State
-import org.team9432.lib.State.Mode.*
+import org.team9432.lib.LibraryState
+import org.team9432.lib.LibraryState.Mode.*
 
 /** A generic cancoder wrapper that safely manages access to all config settings and logs all robot code inputs. */
 class LoggedCancoder(private val config: Config) {
@@ -10,7 +10,7 @@ class LoggedCancoder(private val config: Config) {
     private val inputs = LoggedCancoderIO.CancoderIOInputs(config.additionalQualifier)
 
     init {
-        io = when (State.mode) {
+        io = when (LibraryState.mode) {
             REAL, REPLAY -> LoggedCancoderIOReal(config)
             SIM -> LoggedCancoderIOSim(config)
         }

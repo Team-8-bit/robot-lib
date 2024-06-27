@@ -3,10 +3,10 @@ package org.team9432.lib
 import edu.wpi.first.wpilibj.DriverStation
 
 /** Returns this if the robot alliance is blue, else other. */
-infix fun <T> T.ifBlueElse(other: T) = if (State.alliance == DriverStation.Alliance.Blue) this else other
+infix fun <T> T.ifBlueElse(other: T) = if (LibraryState.alliance == DriverStation.Alliance.Blue) this else other
 
 /** Returns this if the robot alliance is red, else other. */
-infix fun <T> T.ifRedElse(other: T) = if (State.alliance == DriverStation.Alliance.Red) this else other
+infix fun <T> T.ifRedElse(other: T) = if (LibraryState.alliance == DriverStation.Alliance.Red) this else other
 
 /** Prints this and returns it. Useful for inserting into call chains while debugging. */
 inline fun <T> T.println(): T {

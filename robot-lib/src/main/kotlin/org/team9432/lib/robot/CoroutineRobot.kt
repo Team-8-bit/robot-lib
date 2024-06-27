@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import kotlinx.coroutines.*
-import org.team9432.lib.State.alliance
+import org.team9432.lib.LibraryState
 import org.team9432.lib.coroutines.CoroutineNotifier
 import org.team9432.lib.input.Trigger
 import org.team9432.lib.resource.Action
@@ -46,6 +46,8 @@ open class CoroutineRobot: RobotBase() {
     }
 
     override fun startCompetition() = runBlocking {
+        LibraryState.isSimulation = isSimulation()
+
         RobotScope = this
 
         // Report the use of the Kotlin Language for "FRC Usage Report" statistics
@@ -100,7 +102,7 @@ open class CoroutineRobot: RobotBase() {
 
             Trigger.poll()
             periodics.map { launch { it.invoke(this) } }.joinAll()
-            DriverStation.getAlliance().getOrNull()?.let { alliance = it }
+            DriverStation.getAlliance().getOrNull()?.let { LibraryState.alliance = it }
             periodic()
 
             SmartDashboard.updateValues()

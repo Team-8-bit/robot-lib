@@ -1,8 +1,8 @@
 package org.team9432.lib.wrappers.neo
 
 import edu.wpi.first.math.geometry.Rotation2d
-import org.team9432.lib.State
-import org.team9432.lib.State.Mode.*
+import org.team9432.lib.LibraryState
+import org.team9432.lib.LibraryState.Mode.*
 import org.team9432.lib.wrappers.Spark
 
 /**
@@ -14,7 +14,7 @@ class LoggedNeo(val config: Config) {
     private val inputs = LoggedNeoIO.NEOIOInputs(config.additionalQualifier)
 
     init {
-        io = when (State.mode) {
+        io = when (LibraryState.mode) {
             REAL, REPLAY -> LoggedNeoIOReal(config)
             SIM -> LoggedNeoIOSim(config)
         }
