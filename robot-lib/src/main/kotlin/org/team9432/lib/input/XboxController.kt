@@ -10,7 +10,7 @@ import kotlin.math.withSign
 /** XboxController with Trigger factories for easier command binding. */
 class XboxController(
     port: Int,
-    private val joystickDeadband: Double = 0.2,
+    private val joystickDeadband: Double = 0.15,
     private val squareJoysticks: Boolean = true,
     private val triggerButtonDistance: Double = 0.2,
 ): GenericHID(port) {
