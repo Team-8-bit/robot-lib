@@ -157,7 +157,7 @@ internal object ActionManager {
  * the code inside the nested [use] call's [action] will effectively be using subsystems A, B, and C, instead of
  * cancelling itself.
  */
-suspend fun use(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = false, action: Action) =
+suspend fun use(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = true, action: Action) =
     ActionManager.useResources(resources.toSet(), name, cancelConflicts, action)
 
 /**
@@ -165,11 +165,11 @@ suspend fun use(vararg resources: Resource, name: String? = null, cancelConflict
  *
  * See [use] for more information.
  */
-suspend fun useUntilCancelled(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = false, action: Action) =
+suspend fun useUntilCancelled(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = true, action: Action) =
     use(resources = resources, name = name, cancelConflicts = cancelConflicts) {
         action.invoke(this)
         awaitCancellation()
     }
 
-suspend fun <T: Resource> T.use(name: String? = null, cancelConflicts: Boolean = false, action: suspend T.(CoroutineScope) -> Unit) =
+suspend fun <T: Resource> T.use(name: String? = null, cancelConflicts: Boolean = true, action: suspend T.(CoroutineScope) -> Unit) =
     use(this, name = name, cancelConflicts = cancelConflicts) { action(this) }
