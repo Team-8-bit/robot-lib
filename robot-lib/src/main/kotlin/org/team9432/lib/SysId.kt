@@ -19,11 +19,14 @@ class KSysIdConfig(
 
     /** Safety timeout for the test routine commands in seconds. */
     timeout: Double? = null,
+
+    /** Method to record the current state for importing into SysId*/
+    recordState: (String) -> Unit = {}
 ): SysIdRoutine.Config(
     rampRate?.let { Volts.of(it).per(Seconds.of(1.0)) },
     stepVoltage?.let { Volts.of(it) },
     timeout?.let { Seconds.of(it) },
-    { state -> /*Logger.recordOutput("SysIdState", state.toString())*/ }
+    { state -> recordState.invoke(state.toString()) }
 )
 
 /** Sysid mechanism wrapper that hides the Java unit library and some options we don't use. */

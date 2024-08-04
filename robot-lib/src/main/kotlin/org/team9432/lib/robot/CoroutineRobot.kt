@@ -11,11 +11,13 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj.util.WPILibVersion
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.team9432.lib.LibraryState
 import org.team9432.lib.coroutines.CoroutineNotifier
 import org.team9432.lib.input.Trigger
-import org.team9432.lib.resource.Action
 import org.team9432.lib.resource.ActionManager
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.milliseconds
@@ -83,10 +85,10 @@ open class CoroutineRobot: RobotBase() {
             if (currentMode != lastMode) {
                 when (currentMode) {
                     Mode.NONE -> {}
-                    Mode.DISABLED -> disabled()
-                    Mode.AUTONOMOUS -> autonomous()
-                    Mode.TELEOP -> teleop()
-                    Mode.TEST -> test()
+                    Mode.DISABLED -> launch { disabled() }
+                    Mode.AUTONOMOUS -> launch { autonomous() }
+                    Mode.TELEOP -> launch { teleop() }
+                    Mode.TEST -> launch { test() }
                 }
 
                 lastMode = currentMode
@@ -101,7 +103,7 @@ open class CoroutineRobot: RobotBase() {
             }
 
             Trigger.poll()
-            periodics.map { launch { it.invoke(this) } }.joinAll()
+            periodics.forEach { it.invoke() }
             DriverStation.getAlliance().getOrNull()?.let { LibraryState.alliance = it }
             periodic()
 
@@ -119,10 +121,24 @@ open class CoroutineRobot: RobotBase() {
     }
 
     companion object {
-        private val periodics = mutableListOf<Action>()
+        private val periodics = mutableSetOf<() -> Any>()
 
-        fun addPeriodic(periodic: Action) {
-            periodics.add(periodic)
+        fun startPeriodic(function: RobotPeriodic.() -> Unit): RobotPeriodic {
+            val periodic = RobotPeriodic(function)
+            periodic.startPeriodic()
+            return periodic
+        }
+    }
+
+    class RobotPeriodic(action: RobotPeriodic.() -> Unit) {
+        val action = { action.invoke(this) }
+
+        fun startPeriodic() {
+            periodics.add(action)
+        }
+
+        fun stopPeriodic() {
+            periodics.remove(action)
         }
     }
 
