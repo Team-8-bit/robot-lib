@@ -85,10 +85,10 @@ open class CoroutineRobot: RobotBase() {
             if (currentMode != lastMode) {
                 when (currentMode) {
                     Mode.NONE -> {}
-                    Mode.DISABLED -> disabled()
-                    Mode.AUTONOMOUS -> autonomous()
-                    Mode.TELEOP -> teleop()
-                    Mode.TEST -> test()
+                    Mode.DISABLED -> launch { disabled() }
+                    Mode.AUTONOMOUS -> launch { autonomous() }
+                    Mode.TELEOP -> launch { teleop() }
+                    Mode.TEST -> launch { test() }
                 }
 
                 lastMode = currentMode
