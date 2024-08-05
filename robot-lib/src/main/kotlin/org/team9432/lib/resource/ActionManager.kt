@@ -94,7 +94,10 @@ internal object ActionManager {
                         resource.defaultAction?.let { defaultAction ->
                             printDebug("running ${resource.name} default action")
                             actionScope.launch {
-                                useUntilCancelled(resource, name = DEFAULT_ACTION_NAME, cancelConflicts = false, action = defaultAction)
+                                use(resource, name = DEFAULT_ACTION_NAME, cancelConflicts = false) {
+                                    defaultAction.invoke(this)
+                                    awaitCancellation()
+                                }
                             }
                         }
                     }
@@ -108,6 +111,7 @@ internal object ActionManager {
         resources: Set<Resource>,
         name: String?,
         cancelConflicts: Boolean,
+        onCancellation: () -> Unit,
         action: Action,
     ) {
         val context = coroutineContext
@@ -121,6 +125,9 @@ internal object ActionManager {
                 cancelConflicts,
                 cont
             )
+
+            cont.invokeOnCancellation { onCancellation.invoke() }
+
             messageChannel.trySend(message)
         }
     }
@@ -157,19 +164,5 @@ internal object ActionManager {
  * the code inside the nested [use] call's [action] will effectively be using subsystems A, B, and C, instead of
  * cancelling itself.
  */
-suspend fun use(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = true, action: Action) =
-    ActionManager.useResources(resources.toSet(), name, cancelConflicts, action)
-
-/**
- * Attempts to run the provided [action] with exclusive access to all provided [resources] until the parent coroutine is cancelled.
- *
- * See [use] for more information.
- */
-suspend fun useUntilCancelled(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = true, action: Action) =
-    use(resources = resources, name = name, cancelConflicts = cancelConflicts) {
-        action.invoke(this)
-        awaitCancellation()
-    }
-
-suspend fun <T: Resource> T.use(name: String? = null, cancelConflicts: Boolean = true, action: suspend T.(CoroutineScope) -> Unit) =
-    use(this, name = name, cancelConflicts = cancelConflicts) { action(this) }
+suspend fun use(vararg resources: Resource, name: String? = null, cancelConflicts: Boolean = true, onCancellation: () -> Unit = {}, action: Action) =
+    ActionManager.useResources(resources.toSet(), name, cancelConflicts, onCancellation, action)
