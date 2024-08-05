@@ -9,13 +9,13 @@ infix fun <T> T.ifBlueElse(other: T) = if (LibraryState.alliance == DriverStatio
 infix fun <T> T.ifRedElse(other: T) = if (LibraryState.alliance == DriverStation.Alliance.Red) this else other
 
 /** Prints this and returns it. Useful for inserting into call chains while debugging. */
-inline fun <T> T.println(): T {
+inline fun <T> T.printinln(): T {
     println(this.toString())
     return this
 }
 
 /** Passes this into [text], prints the output, and returns it. Useful for inserting into call chains while debugging. */
-inline fun <T> T.println(text: (T) -> String): T {
+inline fun <T> T.printinln(text: (T) -> Any?): T {
     println(text(this))
     return this
 }
