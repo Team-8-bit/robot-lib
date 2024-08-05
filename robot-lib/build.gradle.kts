@@ -25,6 +25,7 @@ dependencies {
     implementation("org.photonvision:photonlib-java:v2024.3.1")
     implementation("org.photonvision:photontargeting-java:v2024.3.1")
     implementation("com.revrobotics.frc:REVLib-java:2024.2.1")
+    implementation("com.github.jonahsnider:doglog:2024.5.8")
 
     // Misc.
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1-Beta")
@@ -45,6 +46,7 @@ repositories {
     maven { setUrl("https://maven.revrobotics.com/") }
     maven { setUrl("https://maven.photonvision.org/repository/internal") }
     maven { setUrl("https://maven.photonvision.org/repository/snapshots") }
+    maven { setUrl("https://jitpack.io") }
 }
 
 sourceSets.main {
