@@ -1,8 +1,7 @@
-package org.team9432.lib.wrappers
+package org.team9432.lib
 
 import edu.wpi.first.wpilibj.DigitalInput
 import kotlinx.coroutines.delay
-import org.team9432.lib.LibraryState
 import org.team9432.lib.coroutines.await
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
