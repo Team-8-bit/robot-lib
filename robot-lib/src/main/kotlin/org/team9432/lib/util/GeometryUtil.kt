@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import org.team9432.lib.constants.EvergreenFieldConstants
-import org.team9432.lib.ifBlueElse
 import org.team9432.lib.unit.Translation2d
 import org.team9432.lib.unit.meters
 
@@ -18,10 +17,10 @@ fun Translation2d.flip() = Translation2d(EvergreenFieldConstants.centerX + (Ever
 fun Rotation2d.flip(): Rotation2d = Rotation2d.fromDegrees((degrees + 180) * -1)
 
 /** Flips this [Pose2d] to the correct side of a mirrored field based on the current alliance color. */
-fun Pose2d.applyFlip() = this ifBlueElse this.flip()
+fun Pose2d.applyFlip() = allianceSwitch(blue = this, red = this.flip())
 
 /** Flips this [Translation2d] to the correct side of a mirrored field based on the current alliance color. */
-fun Translation2d.applyFlip() = this ifBlueElse this.flip()
+fun Translation2d.applyFlip() = allianceSwitch(blue = this, red = this.flip())
 
 /** Flips this [Rotation2d] to the correct side of a mirrored field based on the current alliance color. */
-fun Rotation2d.applyFlip() = this ifBlueElse this.flip()
+fun Rotation2d.applyFlip() = allianceSwitch(blue = this, red = this.flip())
