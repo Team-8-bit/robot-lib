@@ -1,7 +1,10 @@
 package org.team9432.lib.doglog
 
+import com.revrobotics.CANSparkBase
 import dev.doglog.DogLogOptions
+import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.PowerDistribution
+import org.team9432.lib.Beambreak
 
 object Logger: KDogLog() {
 
@@ -35,4 +38,15 @@ object Logger: KDogLog() {
 
     fun configureEventDefaults() = configure(ntPublish = false, captureNt = false, captureDs = true, logExtras = true, logEntryQueueCapacity = 1000)
     fun configureDevelopmentDefaults() = configure(ntPublish = true, captureNt = false, captureDs = true, logExtras = true, logEntryQueueCapacity = 1000)
+
+    fun log(key: String, spark: CANSparkBase) {
+        log("$key/PositionRad", Units.rotationsToRadians(spark.encoder.position))
+        log("$key/AppliedVolts", spark.appliedOutput * spark.busVoltage)
+        log("$key/CurrentAmps", spark.outputCurrent)
+        log("$key/VelocityRadPerSec", Units.rotationsPerMinuteToRadiansPerSecond(spark.encoder.velocity))
+    }
+
+    fun log(key: String, beambreak: Beambreak) {
+        log("$key/isTripped", beambreak.isTripped())
+    }
 }
