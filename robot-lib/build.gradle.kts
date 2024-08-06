@@ -26,6 +26,8 @@ dependencies {
     implementation("org.photonvision:photontargeting-java:v2024.3.1")
     implementation("com.revrobotics.frc:REVLib-java:2024.2.1")
     implementation("com.github.jonahsnider:doglog:2024.5.8")
+    implementation("com.choreo.lib:ChoreoLib-java:2024.2.3")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Misc.
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1-Beta")
@@ -47,6 +49,7 @@ repositories {
     maven { setUrl("https://maven.photonvision.org/repository/internal") }
     maven { setUrl("https://maven.photonvision.org/repository/snapshots") }
     maven { setUrl("https://jitpack.io") }
+    maven { setUrl("https://SleipnirGroup.github.io/ChoreoLib/dep") }
 }
 
 sourceSets.main {
