@@ -6,7 +6,7 @@ import kotlin.coroutines.resume
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-suspend fun await(condition: () -> Boolean, period: Duration = 20.milliseconds) {
+suspend fun await(period: Duration = 20.milliseconds, condition: () -> Boolean) {
     while (!condition()) delay(period)
 }
 

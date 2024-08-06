@@ -18,7 +18,7 @@ class Beambreak(dioChannel: Int) {
             delay(simDelay)
             simStateTripped = true
         } else {
-            await(::isTripped, period)
+            await(period, ::isTripped)
         }
     }
 
@@ -27,7 +27,7 @@ class Beambreak(dioChannel: Int) {
             delay(simDelay)
             simStateTripped = false
         } else {
-            await(::isClear, period)
+            await(period, ::isClear)
         }
     }
 }
