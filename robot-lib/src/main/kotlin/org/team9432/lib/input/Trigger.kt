@@ -4,7 +4,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import org.team9432.lib.resource.Action
-import org.team9432.lib.robot.RobotScope
+import org.team9432.lib.coroutines.RobotScope
 import java.util.function.BooleanSupplier
 
 /**

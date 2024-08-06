@@ -1,10 +1,9 @@
 package org.team9432.lib.doglog
 
-import dev.doglog.DogLog
 import dev.doglog.DogLogOptions
 import edu.wpi.first.wpilibj.PowerDistribution
 
-object Logger: DogLog() {
+object Logger: KDogLog() {
 
     /**
      * Options for configuring DogLog.

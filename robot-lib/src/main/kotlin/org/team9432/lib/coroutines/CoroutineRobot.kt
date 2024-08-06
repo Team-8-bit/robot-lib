@@ -1,4 +1,4 @@
-package org.team9432.lib.robot
+package org.team9432.lib.coroutines
 
 import edu.wpi.first.hal.DriverStationJNI
 import edu.wpi.first.hal.FRCNetComm.tInstances
@@ -16,7 +16,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.team9432.lib.LibraryState
-import org.team9432.lib.coroutines.CoroutineNotifier
 import org.team9432.lib.input.Trigger
 import org.team9432.lib.resource.ActionManager
 import kotlin.jvm.optionals.getOrNull

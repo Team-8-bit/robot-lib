@@ -3,7 +3,7 @@ package org.team9432.lib.resource
 import edu.wpi.first.wpilibj2.command.Command
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
-import org.team9432.lib.robot.CoroutineRobot
+import org.team9432.lib.coroutines.CoroutineRobot
 import kotlin.coroutines.resume
 
 typealias Action = suspend CoroutineScope.() -> Unit

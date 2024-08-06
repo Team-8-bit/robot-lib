@@ -2,7 +2,6 @@ package org.team9432.lib.coroutines
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
-import org.team9432.lib.robot.CoroutineRobot
 import kotlin.coroutines.resume
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds

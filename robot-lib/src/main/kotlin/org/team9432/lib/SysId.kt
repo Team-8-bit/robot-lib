@@ -4,8 +4,9 @@ import edu.wpi.first.units.Units.Seconds
 import edu.wpi.first.units.Units.Volts
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction
-import org.team9432.lib.wrappers.neo.LoggedNeo
-import edu.wpi.first.wpilibj2.command.Command as WPICommand
+import org.team9432.lib.doglog.Logger
+import org.team9432.lib.resource.Action
+import org.team9432.lib.resource.toAction
 import edu.wpi.first.wpilibj2.command.Subsystem as WPISubsystem
 
 
@@ -21,7 +22,7 @@ class KSysIdConfig(
     timeout: Double? = null,
 
     /** Method to record the current state for importing into SysId*/
-    recordState: (String) -> Unit = {}
+    recordState: (String) -> Unit = { Logger.log("SysIdState", it) },
 ): SysIdRoutine.Config(
     rampRate?.let { Volts.of(it).per(Seconds.of(1.0)) },
     stepVoltage?.let { Volts.of(it) },
@@ -36,9 +37,6 @@ class KSysIdMechanism(
 ): SysIdRoutine.Mechanism(drive?.let { { drive(it.`in`(Volts)) } }, null, object: WPISubsystem {}, "")
 
 object SysIdUtil {
-    /** Get Sysid tests using the setVoltage() method of this motor. */
-    fun LoggedNeo.getSysIdTests(config: KSysIdConfig = KSysIdConfig()) = getSysIdTests(config) { volts -> setVoltage(volts) }
-
     /** Get a set of Sysid tests using the given parameters. */
     fun getSysIdTests(config: KSysIdConfig = KSysIdConfig(), setMotors: (Double) -> Unit): SysIdTestContainer {
         val routine = SysIdRoutine(
@@ -47,17 +45,17 @@ object SysIdUtil {
         )
 
         return SysIdTestContainer(
-            quasistaticForward = routine.quasistatic(Direction.kForward),
-            quasistaticReverse = routine.quasistatic(Direction.kReverse),
-            dynamicForward = routine.dynamic(Direction.kForward),
-            dynamicReverse = routine.dynamic(Direction.kReverse)
+            quasistaticForward = routine.quasistatic(Direction.kForward).toAction(),
+            quasistaticReverse = routine.quasistatic(Direction.kReverse).toAction(),
+            dynamicForward = routine.dynamic(Direction.kForward).toAction(),
+            dynamicReverse = routine.dynamic(Direction.kReverse).toAction()
         )
     }
 }
 
 data class SysIdTestContainer(
-    val quasistaticForward: WPICommand,
-    val quasistaticReverse: WPICommand,
-    val dynamicForward: WPICommand,
-    val dynamicReverse: WPICommand,
+    val quasistaticForward: Action,
+    val quasistaticReverse: Action,
+    val dynamicForward: Action,
+    val dynamicReverse: Action,
 )
