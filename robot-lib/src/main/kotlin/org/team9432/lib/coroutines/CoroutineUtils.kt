@@ -10,11 +10,12 @@ suspend fun await(period: Duration = 20.milliseconds, condition: () -> Boolean) 
     while (!condition()) delay(period)
 }
 
-suspend fun robotPeriodic(function: () -> Boolean) {
+suspend fun robotPeriodic(isFinished: () -> Boolean, function: () -> Unit) {
     suspendCancellableCoroutine { cont ->
         val periodic = CoroutineRobot.startPeriodic {
-            val isFinished = function.invoke()
-            if (isFinished) {
+            function.invoke()
+
+            if (isFinished.invoke()) {
                 stopPeriodic()
                 cont.resume(Unit)
             }
