@@ -15,8 +15,10 @@ class Beambreak(dioChannel: Int) {
 
     suspend fun awaitTripped(period: Duration = 20.milliseconds, simDelay: Duration = Duration.INFINITE) {
         if (LibraryState.isSimulation) {
-            delay(simDelay)
-            simStateTripped = true
+            if (!simStateTripped) {
+                delay(simDelay)
+                simStateTripped = true
+            }
         } else {
             await(period, ::isTripped)
         }
@@ -24,10 +26,20 @@ class Beambreak(dioChannel: Int) {
 
     suspend fun awaitClear(period: Duration = 20.milliseconds, simDelay: Duration = Duration.INFINITE) {
         if (LibraryState.isSimulation) {
-            delay(simDelay)
-            simStateTripped = false
+            if (simStateTripped) {
+                delay(simDelay)
+                simStateTripped = false
+            }
         } else {
             await(period, ::isClear)
         }
+    }
+
+    fun setSimTripped() {
+        simStateTripped = true
+    }
+
+    fun setSimClear() {
+        simStateTripped = false
     }
 }
