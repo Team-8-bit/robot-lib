@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.milliseconds
 lateinit var RobotScope: CoroutineScope
     private set
 
-open class CoroutineRobot: RobotBase() {
+open class CoroutineRobot(private val useActionManager: Boolean): RobotBase() {
     @Volatile
     private var shouldExit = false
 
@@ -56,7 +56,9 @@ open class CoroutineRobot: RobotBase() {
 
         val notifier = CoroutineNotifier(20.milliseconds)
 
-        launch { ActionManager.run() }
+        if (useActionManager) {
+            launch { ActionManager.run() }
+        }
 
         // Robot code initialization
         init()
