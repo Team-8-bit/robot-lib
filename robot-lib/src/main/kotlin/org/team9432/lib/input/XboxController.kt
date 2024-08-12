@@ -3,9 +3,11 @@ package org.team9432.lib.input
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.GenericHID
+import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.withSign
+import kotlin.time.Duration
 
 /** XboxController with Trigger factories for easier command binding. */
 class XboxController(
@@ -53,6 +55,11 @@ class XboxController(
     val back get() = Trigger { getRawButton(Button.BACK.value) }
     val start get() = Trigger { getRawButton(Button.START.value) }
 
+    suspend fun rumbleDuration(duration: Duration) {
+        setRumble(RumbleType.kBothRumble, 1.0)
+        delay(duration)
+        setRumble(RumbleType.kBothRumble, 0.0)
+    }
 
     private fun Double.applyDeadband() = if (abs(this) > joystickDeadband) this else 0.0
     private fun Double.applySquare() = if (squareJoysticks) this.pow(2).withSign(this) else this
