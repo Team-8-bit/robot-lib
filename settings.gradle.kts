@@ -40,4 +40,3 @@ rootProject.name = "lib"
 
 include(":robot-lib")
 include(":annotation")
-include(":choreo-plugin")
