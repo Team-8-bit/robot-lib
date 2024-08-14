@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.team9432.lib.LibraryState
-import org.team9432.lib.coroutines.CoroutineRobot
+import org.team9432.lib.RobotPeriodicManager
 import kotlin.coroutines.resume
 
 object ChoreoUtil {
@@ -32,7 +32,7 @@ object ChoreoUtil {
             val timer = Timer()
             timer.restart()
 
-            val periodic = CoroutineRobot.startPeriodic {
+            val periodic = RobotPeriodicManager.startPeriodic {
                 val targetChassisSpeeds = controlFunction.invoke(trajectory.sample(timer.get(), shouldMirrorTrajectory))
 
                 outputChassisSpeeds.invoke(targetChassisSpeeds)

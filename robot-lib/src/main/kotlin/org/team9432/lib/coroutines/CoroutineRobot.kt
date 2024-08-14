@@ -16,9 +16,11 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.team9432.lib.LibraryState
+import org.team9432.lib.RobotPeriodicManager
 import org.team9432.lib.input.Trigger
 import org.team9432.lib.resource.ActionManager
 import kotlin.jvm.optionals.getOrNull
+import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
 
 lateinit var RobotScope: CoroutineScope
@@ -38,7 +40,7 @@ open class CoroutineRobot(private val useActionManager: Boolean): RobotBase() {
     open suspend fun test() {}
     open suspend fun periodic() {}
 
-    private enum class Mode {
+    enum class Mode {
         NONE,
         DISABLED,
         AUTONOMOUS,
@@ -46,8 +48,19 @@ open class CoroutineRobot(private val useActionManager: Boolean): RobotBase() {
         TEST
     }
 
+    /** The last alliance that the robot received from the ds. Null if the robot hasn't been connected yet. */
+    var alliance: DriverStation.Alliance? = null
+        private set
+
+    /** True if the robot is running in simulation. */
+    var isSimulated: Boolean by Delegates.notNull()
+        private set
+
+    val mode get() = lastMode
+
     override fun startCompetition() = runBlocking {
-        LibraryState.isSimulation = isSimulation()
+        isSimulated = isSimulation()
+        LibraryState.isSimulated = isSimulated
 
         RobotScope = this
 
@@ -104,8 +117,8 @@ open class CoroutineRobot(private val useActionManager: Boolean): RobotBase() {
             }
 
             Trigger.poll()
-            periodics.forEach { it.invoke() }
-            DriverStation.getAlliance().getOrNull()?.let { LibraryState.alliance = it }
+            RobotPeriodicManager.invokeAll()
+            DriverStation.getAlliance().getOrNull()?.let { alliance = it; LibraryState.alliance = it }
             periodic()
 
             SmartDashboard.updateValues()
@@ -119,28 +132,6 @@ open class CoroutineRobot(private val useActionManager: Boolean): RobotBase() {
         }
 
         notifier.close()
-    }
-
-    companion object {
-        private val periodics = mutableSetOf<() -> Any>()
-
-        fun startPeriodic(function: RobotPeriodic.() -> Unit): RobotPeriodic {
-            val periodic = RobotPeriodic(function)
-            periodic.startPeriodic()
-            return periodic
-        }
-    }
-
-    class RobotPeriodic(action: RobotPeriodic.() -> Unit) {
-        val action = { action.invoke(this) }
-
-        fun startPeriodic() {
-            periodics.add(action)
-        }
-
-        fun stopPeriodic() {
-            periodics.remove(action)
-        }
     }
 
     override fun endCompetition() {
