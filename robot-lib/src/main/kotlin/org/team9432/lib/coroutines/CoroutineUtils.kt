@@ -1,7 +1,6 @@
 package org.team9432.lib.coroutines
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.*
 import org.team9432.lib.RobotPeriodicManager
 import kotlin.coroutines.resume
 import kotlin.time.Duration
@@ -26,4 +25,8 @@ suspend fun robotPeriodic(isFinished: () -> Boolean, function: () -> Unit) {
             periodic.stopPeriodic()
         }
     }
+}
+
+suspend fun parallel(vararg tasks: suspend () -> Unit) = coroutineScope {
+    tasks.map { launch { it.invoke() } }.joinAll()
 }
