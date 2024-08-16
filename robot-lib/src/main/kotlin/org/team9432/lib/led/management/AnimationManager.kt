@@ -26,10 +26,7 @@ object AnimationManager {
     /** A list of all the animations that are currently being managed. */
     private val runningAnimations = mutableSetOf<Animation>()
 
-    internal lateinit var coroutineScope: CoroutineScope
-
     suspend fun run(updateRate: Duration) = coroutineScope {
-        coroutineScope = this
         while (isActive) {
             handleQueue() // Handle the queue before it starts to avoid concurrent modification
 
