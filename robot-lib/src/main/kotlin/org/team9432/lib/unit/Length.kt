@@ -15,6 +15,14 @@ inline val Double.inches get() = Length(this * METERS_PER_INCH)
 /** Constructs a length using this value in feet. */
 inline val Double.feet get() = Length(this * METERS_PER_FOOT)
 
+/** Constructs a length using this value in meters. */
+inline val Int.meters get() = Length(this.toDouble())
+
+/** Constructs a length using this value in inches. */
+inline val Int.inches get() = Length(this * METERS_PER_INCH)
+
+/** Constructs a length using this value in feet. */
+inline val Int.feet get() = Length(this * METERS_PER_FOOT)
 
 /** Gets this length in meters. */
 inline val Length.inMeters get() = value
