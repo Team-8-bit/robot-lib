@@ -1,7 +1,8 @@
-package org.team9432.lib
+package org.team9432.lib.dashboard
 
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.networktables.NetworkTableInstance
+import org.team9432.lib.RobotPeriodicManager
 
 private const val placeholder: String = "<NA>"
 
