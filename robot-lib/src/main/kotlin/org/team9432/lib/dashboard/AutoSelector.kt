@@ -22,31 +22,39 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
     }
 
     class AutoSelectorQuestionScope internal constructor() {
-        private val questions = mutableListOf<AutoSelectorOptionScope>()
+        private val questions = mutableListOf<AutoSelectorQuestion<*>>()
 
         /** Add a new question */
-        fun addQuestion(question: String, addOptions: AutoSelectorOptionScope.() -> Unit) {
-            questions.add(AutoSelectorOptionScope(question).apply(addOptions))
+        fun <T> addQuestion(question: String, onSelect: ((T) -> Unit)? = null, addOptions: AutoSelectorOptionScope<T>.() -> Unit) {
+            questions.add(AutoSelectorQuestion(AutoSelectorOptionScope<T>(question).apply(addOptions), onSelect))
         }
 
         internal fun update(choosers: Queue<DashboardQuestion>) {
             questions.forEach { it.update(choosers) }
         }
-    }
 
-    class AutoSelectorOptionScope internal constructor(private val question: String) {
-        private val options = mutableMapOf<String, AutoSelectorQuestionScope?>()
-
-        /** Add an option to the question, with optional nested questions to show if this option is selected. */
-        fun addOption(answer: String, buildQuestions: (AutoSelectorQuestionScope.() -> Unit)? = null) {
-            if (buildQuestions != null) {
-                options[answer] = AutoSelectorQuestionScope().apply(buildQuestions)
-            } else {
-                options[answer] = null
+        // This class is needed to retain the type of the question so it can be passed to onSelect()
+        private data class AutoSelectorQuestion<T>(private val options: AutoSelectorOptionScope<T>, private val onSelect: ((T) -> Unit)?) {
+            private var lastValue: T? = null
+            fun update(choosers: Queue<DashboardQuestion>) {
+                val newValue = options.update(choosers)?.invoke()
+                if (lastValue != newValue && newValue != null) {
+                    lastValue = newValue
+                    onSelect?.invoke(newValue)
+                }
             }
         }
+    }
 
-        internal fun update(choosers: Queue<DashboardQuestion>) {
+    class AutoSelectorOptionScope<T> internal constructor(private val question: String) {
+        private val options = mutableMapOf<String, Pair<(() -> T)?, AutoSelectorQuestionScope?>>()
+
+        /** Add an option to the question, with optional nested questions to show if this option is selected. */
+        fun addOption(answer: String, value: (() -> T)? = null, buildQuestions: (AutoSelectorQuestionScope.() -> Unit)? = null) {
+            options[answer] = value to buildQuestions?.let { AutoSelectorQuestionScope().apply(it) }
+        }
+
+        internal fun update(choosers: Queue<DashboardQuestion>): (() -> T)? {
             // Take a chooser from the list
             // This also removes the chooser so that the same one is never set twice in one loop
             val targetChooser = choosers.poll()
@@ -56,7 +64,10 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
 
             // Pass the remaining choosers to any nested questions
             val answer = targetChooser.chooser.get()
-            options[answer]?.update(choosers)
+            options[answer]?.second?.update(choosers)
+
+            // Return the selected value
+            return targetChooser.chooser.get()?.let { options[it] }?.first
         }
     }
 
