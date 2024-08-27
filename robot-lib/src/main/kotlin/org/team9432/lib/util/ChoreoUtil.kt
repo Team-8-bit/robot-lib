@@ -1,5 +1,5 @@
 package org.team9432.lib.util
-
+import com.choreo.lib.Choreo
 import com.choreo.lib.ChoreoTrajectory
 import com.choreo.lib.ChoreoTrajectoryState
 import edu.wpi.first.math.controller.PIDController
@@ -14,6 +14,9 @@ import kotlin.coroutines.resume
 
 object ChoreoUtil {
     fun ChoreoTrajectory.getAutoFlippedInitialPose(): Pose2d = allianceSwitch(blue = initialPose, red = flippedInitialPose)
+
+    private val cachedPaths = mutableMapOf<String, ChoreoTrajectory>()
+    fun getTrajectoryWithCache(pathName: String) = cachedPaths.getOrPut(pathName) { Choreo.getTrajectory(pathName) }
 
     /**
      * @param trajectory The trajectory to follow.
