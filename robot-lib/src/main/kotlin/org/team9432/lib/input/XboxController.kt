@@ -4,6 +4,8 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.GenericHID
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.team9432.lib.coroutines.RobotScope
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.withSign
@@ -54,6 +56,15 @@ class XboxController(
     val y get() = Trigger { getRawButton(Button.Y.value) }
     val back get() = Trigger { getRawButton(Button.BACK.value) }
     val start get() = Trigger { getRawButton(Button.START.value) }
+
+    val povUp get() = Trigger { getPOV(0) == 0 }
+    val povRight get() = Trigger { getPOV(0) == 90 }
+    val povDown get() = Trigger { getPOV(0) == 180 }
+    val povLeft get() = Trigger { getPOV(0) == 270 }
+    val povUpRight get() = Trigger { getPOV(0) == 45 }
+    val povDownRight get() = Trigger { getPOV(0) == 135 }
+    val povDownLeft get() = Trigger { getPOV(0) == 225 }
+    val povUpLeft get() = Trigger { getPOV(0) == 315 }
 
     suspend fun rumbleDuration(duration: Duration) {
         setRumble(RumbleType.kBothRumble, 1.0)
