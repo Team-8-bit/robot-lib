@@ -1,11 +1,11 @@
 package org.team9432.lib.led.animations
 
-import org.team9432.lib.coroutines.delay
+import kotlinx.coroutines.delay
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.management.Animation
 import org.team9432.lib.led.management.Section
 import org.team9432.lib.led.strip.LEDStrip
-import org.team9432.lib.unit.Time
+import kotlin.time.Duration
 
 /**
  * Fades to a color.
@@ -18,7 +18,7 @@ import org.team9432.lib.unit.Time
  */
 fun Section.fadeToColor(
     color: Color,
-    duration: Time,
+    duration: Duration,
     speed: Int,
 ) = object: Animation(this) {
     override suspend fun runAnimation() {

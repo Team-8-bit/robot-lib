@@ -20,6 +20,14 @@ inline val Double.degrees get() = Angle(this * RADIANS_PER_DEGREE)
 /** Constructs an Angle using this value in rotations. */
 inline val Double.rotations get() = Angle(this * RADIANS_PER_ROTATION)
 
+/** Constructs an Angle using this value in radians. */
+inline val Int.radians get() = Angle(this.toDouble())
+
+/** Constructs an Angle using this value in degrees. */
+inline val Int.degrees get() = Angle(this * RADIANS_PER_DEGREE)
+
+/** Constructs an Angle using this value in rotations. */
+inline val Int.rotations get() = Angle(this * RADIANS_PER_ROTATION)
 
 /** Gets this angle in radians. */
 inline val Angle.inRadians get() = value

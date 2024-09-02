@@ -1,7 +1,11 @@
 package org.team9432.lib.led.management
 
-import org.team9432.lib.commandbased.KPeriodic
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import org.team9432.lib.led.strip.LEDStrip
+import kotlin.time.Duration
 
 /**
  * Each animation defines a priority and the led indices that it uses.
@@ -18,31 +22,35 @@ import org.team9432.lib.led.strip.LEDStrip
  *
  * Priorities are integers (defaulting to zero) with higher numbers being higher priority.
  */
-object AnimationManager: KPeriodic() {
+object AnimationManager {
     /** A list of all the animations that are currently being managed. */
     private val runningAnimations = mutableSetOf<Animation>()
 
-    override fun periodic() {
-        handleQueue() // Handle the queue before it starts to avoid concurrent modification
+    suspend fun run(updateRate: Duration) = coroutineScope {
+        while (isActive) {
+            handleQueue() // Handle the queue before it starts to avoid concurrent modification
 
-        // Build a new list for each of indices on the strip
-        val colorList = List(LEDStrip.ledCount) { index ->
-            // Get all animations that want to set the color of this index
-            val animationsUsingThisIndex = runningAnimations.filter { it.section.containsBaseStripPixel(index) }
+            // Build a new list for each of indices on the strip
+            val colorList = List(LEDStrip.ledCount) { index ->
+                // Get all animations that want to set the color of this index
+                val animationsUsingThisIndex = runningAnimations.filter { it.section.containsBaseStripPixel(index) }
 
-            if (animationsUsingThisIndex.isEmpty()) {
-                // If there aren't any animations using this pixel, just use the color it's already set to
-                LEDStrip.getPixelColor(index)
-            } else {
-                // Else take the color from the animation with the highest priority
-                animationsUsingThisIndex.maxBy { it.priority ?: 0 }.colorset[index]
+                if (animationsUsingThisIndex.isEmpty()) {
+                    // If there aren't any animations using this pixel, just use the color it's already set to
+                    LEDStrip.getPixelColor(index)
+                } else {
+                    // Else take the color from the animation with the highest priority
+                    animationsUsingThisIndex.maxBy { it.priority ?: 0 }.colorset[index]
+                }
             }
-        }
 
-        // Update the led strip with the new colors
-        LEDStrip.updateColors(colorList)
-        // Render!
-        LEDStrip.render()
+            // Update the led strip with the new colors
+            LEDStrip.updateColors(colorList)
+            // Render!
+            LEDStrip.render()
+
+            delay(updateRate)
+        }
     }
 
     /** Updates the [runningAnimations] list from queued items. */

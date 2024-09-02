@@ -2,8 +2,7 @@ package org.team9432.lib.led.management
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.team9432.lib.coroutines.SuspendFunction
-import org.team9432.lib.robot.RobotBase
+import org.team9432.lib.coroutines.RobotScope
 
 /** Binds animations to given boolean conditions. Schedules and ends them as needed when [update] is called. */
 class AnimationBindScope private constructor(private val enabled: () -> Boolean) {
@@ -14,7 +13,7 @@ class AnimationBindScope private constructor(private val enabled: () -> Boolean)
     private val onFalse: MutableList<AnimationBindScope> = mutableListOf()
 
     /** The animation run when this scope is enabled. */
-    private var animation: SuspendFunction? = null
+    private var animation: (suspend () -> Unit)? = null
 
     /** The job of the animation if currently running. */
     private var job: Job? = null
@@ -63,7 +62,7 @@ class AnimationBindScope private constructor(private val enabled: () -> Boolean)
     }
 
     /** Sets the animation that is bound to this scope. */
-    fun setAnimation(animation: SuspendFunction) {
+    fun setAnimation(animation: suspend () -> Unit) {
         this.animation = animation
     }
 
@@ -79,7 +78,7 @@ class AnimationBindScope private constructor(private val enabled: () -> Boolean)
         val animationReference = animation ?: return
 
         if (enabled) {
-            job = RobotBase.coroutineScope.launch {
+            job = RobotScope.launch {
                 animationReference.invoke()
             }
         } else {

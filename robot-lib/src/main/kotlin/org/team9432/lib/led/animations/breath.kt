@@ -1,12 +1,12 @@
 package org.team9432.lib.led.animations
 
-import org.team9432.lib.coroutines.delay
+import kotlinx.coroutines.delay
 import org.team9432.lib.led.color.Color
 import org.team9432.lib.led.management.Animation
 import org.team9432.lib.led.management.Section
 import org.team9432.lib.led.strip.LEDStrip
-import org.team9432.lib.unit.Time
-import org.team9432.lib.unit.seconds
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Fades between a list of colors.
@@ -19,7 +19,7 @@ import org.team9432.lib.unit.seconds
  */
 fun Section.breath(
     colors: List<Color>,
-    colorDuration: Time = 3.seconds,
+    colorDuration: Duration = 3.seconds,
     speed: Int = 5,
 ) = object: Animation(this) {
     init {
