@@ -8,6 +8,7 @@ pluginManagement {
     plugins {
         id("com.google.devtools.ksp") version kspVersion
         kotlin("jvm") version kotlinVersion
+        kotlin("plugin.serialization") version kotlinVersion
     }
 
     repositories {
@@ -40,3 +41,4 @@ rootProject.name = "lib"
 
 include(":robot-lib")
 include(":annotation")
+include(":choreo-generator")
