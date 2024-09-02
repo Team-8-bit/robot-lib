@@ -8,6 +8,7 @@ _Team 9432's library code for use in all seasons._
 - [`annotation/`](annotation/src/main/kotlin/org/team9432/annotation) A custom annotation processor to replace
   AdvantageKit's @AutoLog for Kotlin.
 - [`robot-lib/`](robot-lib/src/main/kotlin/org/team9432/lib) Robot library code.
+- [`choreo-generator/`](choreo-generator/src/main/kotlin/org/team9432/choreogenerator) Choreo trajectory generator.
 
 ## Inspiration
 
