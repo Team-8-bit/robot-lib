@@ -33,4 +33,6 @@ abstract class Resource(val name: String) {
      * and not upon resource creation.
      */
     open val defaultAction: Action? = null
+
+    open fun akitUpdate() {}
 }
