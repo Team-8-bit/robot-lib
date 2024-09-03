@@ -1,6 +1,7 @@
 package org.team9432.lib.coroutines
 
 import edu.wpi.first.wpilibj.DriverStation
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.littletonrobotics.junction.LoggedRobot
 import org.team9432.lib.RobotPeriodicManager
@@ -21,8 +22,10 @@ open class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
             }
         }
 
+    final override val coroutineScope: CoroutineScope = DetermenisticCoroutineManager.coroutineScope
+
     override fun robotPeriodic() {
-        RobotCoroutineManager.updateCoroutines()
+        DetermenisticCoroutineManager.updateCoroutines()
         DriverStation.getAlliance().ifPresent { alliance = it }
         RobotPeriodicManager.invokeAll()
     }
@@ -38,22 +41,22 @@ open class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
     open suspend fun test() {}
 
     override fun robotInit() {
-        RobotCoroutineManager.coroutineScope.launch { init() }
+        coroutineScope.launch { init() }
     }
 
     override fun disabledInit() {
-        RobotCoroutineManager.coroutineScope.launch { disabled() }
+        coroutineScope.launch { disabled() }
     }
 
     override fun autonomousInit() {
-        RobotCoroutineManager.coroutineScope.launch { autonomous() }
+        coroutineScope.launch { autonomous() }
     }
 
     override fun teleopInit() {
-        RobotCoroutineManager.coroutineScope.launch { teleop() }
+        coroutineScope.launch { teleop() }
     }
 
     override fun testInit() {
-        RobotCoroutineManager.coroutineScope.launch { test() }
+        coroutineScope.launch { test() }
     }
 }

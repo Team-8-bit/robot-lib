@@ -22,9 +22,6 @@ import org.team9432.lib.resource.ActionManager
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.milliseconds
 
-lateinit var RobotScope: CoroutineScope
-    private set
-
 open class CoroutineRobot(private val useActionManager: Boolean): RobotBase(), Team8BitRobot {
     @Volatile
     private var shouldExit = false
@@ -47,8 +44,10 @@ open class CoroutineRobot(private val useActionManager: Boolean): RobotBase(), T
 
     override val mode get() = lastMode
 
+    override lateinit var coroutineScope: CoroutineScope
+
     override fun startCompetition() = runBlocking {
-        RobotScope = this
+        coroutineScope = this
 
         // Report the use of the Kotlin Language for "FRC Usage Report" statistics
         HAL.report(tResourceType.kResourceType_Language, tInstances.kLanguage_Kotlin, 0, WPILibVersion.Version)

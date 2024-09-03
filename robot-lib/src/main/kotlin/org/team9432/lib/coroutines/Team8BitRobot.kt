@@ -1,11 +1,13 @@
 package org.team9432.lib.coroutines
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance
+import kotlinx.coroutines.CoroutineScope
 
 interface Team8BitRobot {
     val alliance: Alliance?
     val isSimulated: Boolean
     val mode: Mode
+    val coroutineScope: CoroutineScope
 
     enum class Mode {
         NONE,

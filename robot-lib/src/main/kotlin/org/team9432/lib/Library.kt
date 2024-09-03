@@ -1,6 +1,7 @@
 package org.team9432.lib
 
 import edu.wpi.first.wpilibj.DriverStation
+import kotlinx.coroutines.CoroutineScope
 import org.team9432.lib.coroutines.Team8BitRobot
 import kotlin.properties.Delegates
 
@@ -12,6 +13,9 @@ object Library {
 
     /** True if the robot is running in simulation. */
     internal val isSimulated: Boolean get() = robot.isSimulated
+
+    /** The [CoroutineScope] of the current robot. */
+    internal val coroutineScope: CoroutineScope get() = robot.coroutineScope
 
     /** Initializes the library, some features will not work unless this is called. */
     fun initialize(robot: Team8BitRobot) {

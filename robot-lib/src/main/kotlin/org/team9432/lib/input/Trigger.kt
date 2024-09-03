@@ -3,8 +3,8 @@ package org.team9432.lib.input
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import org.team9432.lib.Library
 import org.team9432.lib.RobotPeriodicManager
-import org.team9432.lib.coroutines.RobotScope
 import org.team9432.lib.resource.Action
 import java.util.function.BooleanSupplier
 
@@ -25,6 +25,8 @@ class Trigger(private val condition: () -> Boolean): () -> Boolean {
     companion object {
         private val buttons = mutableListOf<() -> Unit>()
 
+        private val triggerScope = Library.coroutineScope
+        
         fun addButton(button: () -> Unit) {
             buttons.add(button)
         }
@@ -48,7 +50,7 @@ class Trigger(private val condition: () -> Boolean): () -> Boolean {
             val pressed = condition()
             if (!pressedLast && pressed) {
                 val previousJob = job
-                job = RobotScope.launch {
+                job = triggerScope.launch {
                     previousJob?.cancelAndJoin()
                     action()
                 }
@@ -73,7 +75,7 @@ class Trigger(private val condition: () -> Boolean): () -> Boolean {
             val pressed = condition()
             if (pressedLast && !pressed) {
                 val previousJob = job
-                job = RobotScope.launch {
+                job = triggerScope.launch {
                     previousJob?.cancelAndJoin()
                     action()
                 }
@@ -103,7 +105,7 @@ class Trigger(private val condition: () -> Boolean): () -> Boolean {
             val pressed = condition()
             if (!pressedLast && pressed) {
                 val previousJob = job
-                job = RobotScope.launch {
+                job = triggerScope.launch {
                     previousJob?.cancelAndJoin()
                     action()
                 }
@@ -134,7 +136,7 @@ class Trigger(private val condition: () -> Boolean): () -> Boolean {
             val pressed = condition()
             if (pressedLast && !pressed) {
                 val previousJob = job
-                job = RobotScope.launch {
+                job = triggerScope.launch {
                     previousJob?.cancelAndJoin()
                     action()
                 }
@@ -164,7 +166,7 @@ class Trigger(private val condition: () -> Boolean): () -> Boolean {
                 if (previousJob?.isActive == true) {
                     previousJob.cancel()
                 } else {
-                    job = RobotScope.launch {
+                    job = triggerScope.launch {
                         previousJob?.cancelAndJoin()
                         action()
                     }
@@ -193,7 +195,7 @@ class Trigger(private val condition: () -> Boolean): () -> Boolean {
                 if (previousJob?.isActive == true) {
                     previousJob.cancel()
                 } else {
-                    job = RobotScope.launch {
+                    job = triggerScope.launch {
                         previousJob?.cancelAndJoin()
                         action()
                     }
