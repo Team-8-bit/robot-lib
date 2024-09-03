@@ -1,14 +1,30 @@
 package org.team9432.lib.coroutines
 
-import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj.DriverStation
 import kotlinx.coroutines.launch
 import org.littletonrobotics.junction.LoggedRobot
+import org.team9432.lib.RobotPeriodicManager
 
-open class LoggedCoroutineRobot: LoggedRobot(PERIOD) {
-    val isSimulated = RobotBase.isSimulation()
+open class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
+    final override val isSimulated = isSimulation()
+    final override var alliance: DriverStation.Alliance? = null
+        private set
+
+    final override val mode: Team8BitRobot.Mode
+        get() {
+            return when {
+                this.isDisabled -> Team8BitRobot.Mode.DISABLED
+                this.isAutonomousEnabled -> Team8BitRobot.Mode.AUTONOMOUS
+                this.isTeleopEnabled -> Team8BitRobot.Mode.TELEOP
+                this.isTestEnabled -> Team8BitRobot.Mode.TEST
+                else -> Team8BitRobot.Mode.NONE
+            }
+        }
 
     override fun robotPeriodic() {
         RobotCoroutineManager.updateCoroutines()
+        DriverStation.getAlliance().ifPresent { alliance = it }
+        RobotPeriodicManager.invokeAll()
     }
 
     companion object {

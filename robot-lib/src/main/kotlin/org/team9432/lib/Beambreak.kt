@@ -10,11 +10,11 @@ class Beambreak(dioChannel: Int) {
     private val digitalInput = DigitalInput(dioChannel)
     private var simStateTripped: Boolean = false
 
-    fun isTripped() = if (LibraryState.isSimulated) simStateTripped else !digitalInput.get()
-    fun isClear() = if (LibraryState.isSimulated) !simStateTripped else digitalInput.get()
+    fun isTripped() = if (Library.isSimulated) simStateTripped else !digitalInput.get()
+    fun isClear() = if (Library.isSimulated) !simStateTripped else digitalInput.get()
 
     suspend fun awaitTripped(period: Duration = 20.milliseconds, simDelay: Duration = Duration.INFINITE) {
-        if (LibraryState.isSimulated) {
+        if (Library.isSimulated) {
             if (!simStateTripped) {
                 delay(simDelay)
                 simStateTripped = true
@@ -25,7 +25,7 @@ class Beambreak(dioChannel: Int) {
     }
 
     suspend fun awaitClear(period: Duration = 20.milliseconds, simDelay: Duration = Duration.INFINITE) {
-        if (LibraryState.isSimulated) {
+        if (Library.isSimulated) {
             if (simStateTripped) {
                 delay(simDelay)
                 simStateTripped = false

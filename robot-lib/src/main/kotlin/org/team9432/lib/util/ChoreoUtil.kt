@@ -8,7 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import kotlinx.coroutines.suspendCancellableCoroutine
-import org.team9432.lib.LibraryState
+import org.team9432.lib.Library
 import org.team9432.lib.RobotPeriodicManager
 import kotlin.coroutines.resume
 
@@ -29,7 +29,7 @@ object ChoreoUtil {
         controlFunction: (ChoreoTrajectoryState) -> ChassisSpeeds,
         outputChassisSpeeds: (ChassisSpeeds) -> Unit,
     ) {
-        val shouldMirrorTrajectory = LibraryState.alliance == DriverStation.Alliance.Red // Mirror if on the red alliance
+        val shouldMirrorTrajectory = Library.alliance == DriverStation.Alliance.Red // Mirror if on the red alliance
 
         suspendCancellableCoroutine { cont ->
             val timer = Timer()

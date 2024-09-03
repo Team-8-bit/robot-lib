@@ -15,18 +15,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.team9432.lib.LibraryState
 import org.team9432.lib.RobotPeriodicManager
+import org.team9432.lib.coroutines.Team8BitRobot.Mode
 import org.team9432.lib.input.Trigger
 import org.team9432.lib.resource.ActionManager
 import kotlin.jvm.optionals.getOrNull
-import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
 
 lateinit var RobotScope: CoroutineScope
     private set
 
-open class CoroutineRobot(private val useActionManager: Boolean): RobotBase() {
+open class CoroutineRobot(private val useActionManager: Boolean): RobotBase(), Team8BitRobot {
     @Volatile
     private var shouldExit = false
 
@@ -38,30 +37,17 @@ open class CoroutineRobot(private val useActionManager: Boolean): RobotBase() {
     open suspend fun autonomous() {}
     open suspend fun teleop() {}
     open suspend fun test() {}
-    open suspend fun periodic() {}
-
-    enum class Mode {
-        NONE,
-        DISABLED,
-        AUTONOMOUS,
-        TELEOP,
-        TEST
-    }
 
     /** The last alliance that the robot received from the ds. Null if the robot hasn't been connected yet. */
-    var alliance: DriverStation.Alliance? = null
+    final override var alliance: DriverStation.Alliance? = null
         private set
 
     /** True if the robot is running in simulation. */
-    var isSimulated: Boolean by Delegates.notNull()
-        private set
+    override val isSimulated = isSimulation()
 
-    val mode get() = lastMode
+    override val mode get() = lastMode
 
     override fun startCompetition() = runBlocking {
-        isSimulated = isSimulation()
-        LibraryState.isSimulated = isSimulated
-
         RobotScope = this
 
         // Report the use of the Kotlin Language for "FRC Usage Report" statistics
@@ -116,10 +102,8 @@ open class CoroutineRobot(private val useActionManager: Boolean): RobotBase() {
                 Mode.TEST -> DriverStationJNI.observeUserProgramTest()
             }
 
-            Trigger.poll()
             RobotPeriodicManager.invokeAll()
-            DriverStation.getAlliance().getOrNull()?.let { alliance = it; LibraryState.alliance = it }
-            periodic()
+            DriverStation.getAlliance().getOrNull()?.let { alliance = it }
 
             SmartDashboard.updateValues()
             LiveWindow.updateValues()

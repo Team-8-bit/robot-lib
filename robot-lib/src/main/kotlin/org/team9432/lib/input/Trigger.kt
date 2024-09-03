@@ -3,8 +3,9 @@ package org.team9432.lib.input
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
-import org.team9432.lib.resource.Action
+import org.team9432.lib.RobotPeriodicManager
 import org.team9432.lib.coroutines.RobotScope
+import org.team9432.lib.resource.Action
 import java.util.function.BooleanSupplier
 
 /**
@@ -28,8 +29,8 @@ class Trigger(private val condition: () -> Boolean): () -> Boolean {
             buttons.add(button)
         }
 
-        fun poll() {
-            buttons.forEach { it.invoke() }
+        init {
+            RobotPeriodicManager.startPeriodic { buttons.forEach { it.invoke() } }
         }
     }
 

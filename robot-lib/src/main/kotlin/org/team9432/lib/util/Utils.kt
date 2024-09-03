@@ -2,29 +2,29 @@ package org.team9432.lib.util
 
 import edu.wpi.first.wpilibj.DriverStation
 import kotlinx.coroutines.delay
-import org.team9432.lib.LibraryState
+import org.team9432.lib.Library
 import kotlin.time.Duration
 
 /** Returns either [blue] or [red] depending on the alliance color. */
-fun <T> allianceSwitch(blue: T, red: T): T = if (LibraryState.alliance == DriverStation.Alliance.Blue) blue else red
+fun <T> allianceSwitch(blue: T, red: T): T = if (Library.alliance == DriverStation.Alliance.Blue) blue else red
 
 /** Calls the given block when the robot is running in simulation. */
 fun whenSimulated(block: () -> Unit) {
-    if (LibraryState.isSimulated) {
+    if (Library.isSimulated) {
         block.invoke()
     }
 }
 
 /** Calls the given block when the robot is running in simulation. */
 suspend fun whenSimulatedSuspend(block: suspend () -> Unit) {
-    if (LibraryState.isSimulated) {
+    if (Library.isSimulated) {
         block.invoke()
     }
 }
 
 /** Delays for the given duration when the robot is running in simulation. */
 suspend fun simDelay(duration: Duration) {
-    if (LibraryState.isSimulated) {
+    if (Library.isSimulated) {
         delay(duration)
     }
 }
