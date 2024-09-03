@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-internal class RobotCoroutineManagerTests {
+internal class DetermenisticCoroutineManagerTests {
     private val period = LoggedCoroutineRobot.PERIOD
 
     @BeforeEach
@@ -30,7 +30,7 @@ internal class RobotCoroutineManagerTests {
         var coroutineRunCount = 0
 
         fun runSimpleCoroutine(initialDelay: Duration, launchedDelay: Duration, finalDelay: Duration) {
-            RobotCoroutineManager.coroutineScope.launch {
+            DetermenisticCoroutineManager.coroutineScope.launch {
                 delay(initialDelay)
                 launch {
                     delay(launchedDelay)
@@ -49,31 +49,31 @@ internal class RobotCoroutineManagerTests {
         Thread(robot::startCompetition).start()
 
         // Run a coroutine and ensure it completes each step in the correct amount of time
-        assertEquals(0, RobotCoroutineManager.currentDelayedCount) // Nothing has happened yet
+        assertEquals(0, DetermenisticCoroutineManager.currentDelayedCount) // Nothing has happened yet
         assertEquals(0, robot.coroutineRunCount)
 
         robot.runSimpleCoroutine(initialDelay = 1.seconds, launchedDelay = 1.seconds, finalDelay = 2.seconds)
 
         assertEquals(0, robot.coroutineRunCount) // Nothing should have happened yet
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount) // The first delay should have started
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount) // The first delay should have started
         SimHooks.stepTiming(0.99)
         assertEquals(0, robot.coroutineRunCount) // Still nothing should have happened
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount) // The first delay should still be going
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount) // The first delay should still be going
         SimHooks.stepTiming(0.01)
         assertEquals(0, robot.coroutineRunCount) // Now it should be running the second delay but without activating the count
-        assertEquals(2, RobotCoroutineManager.currentDelayedCount) // Now running the first launch{}'d delay and the final two-second delay
+        assertEquals(2, DetermenisticCoroutineManager.currentDelayedCount) // Now running the first launch{}'d delay and the final two-second delay
         SimHooks.stepTiming(0.99) // Nothing should have changed
         assertEquals(0, robot.coroutineRunCount)
-        assertEquals(2, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(2, DetermenisticCoroutineManager.currentDelayedCount)
         SimHooks.stepTiming(0.01) // Now it should have activated the count and finished one of the delays
         assertEquals(1, robot.coroutineRunCount)
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount)
         SimHooks.stepTiming(0.99) // Again, nothing should have changed
         assertEquals(1, robot.coroutineRunCount)
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount)
         SimHooks.stepTiming(0.01) // All delays should be finished
         assertEquals(1, robot.coroutineRunCount)
-        assertEquals(0, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(0, DetermenisticCoroutineManager.currentDelayedCount)
 
         robot.endCompetition()
         robot.close()
@@ -87,28 +87,28 @@ internal class RobotCoroutineManagerTests {
         Thread(robot::startCompetition).start()
 
         // Run a coroutine and ensure it completes each step in the correct amount of time
-        assertEquals(0, RobotCoroutineManager.currentDelayedCount) // Nothing has happened yet
+        assertEquals(0, DetermenisticCoroutineManager.currentDelayedCount) // Nothing has happened yet
         assertEquals(0, robot.coroutineRunCount)
 
         robot.runSimpleCoroutine(initialDelay = 0.03.seconds, launchedDelay = 0.01.seconds, finalDelay = 0.05.seconds)
 
         assertEquals(0, robot.coroutineRunCount) // Nothing should have happened yet
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount) // The first delay should have started
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount) // The first delay should have started
         SimHooks.stepTiming(period)
         assertEquals(0, robot.coroutineRunCount) // Still nothing should have happened
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount) // The first delay should still be going
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount) // The first delay should still be going
         SimHooks.stepTiming(period)
         assertEquals(0, robot.coroutineRunCount) // Now it should be running the second delay but without activating the count
-        assertEquals(2, RobotCoroutineManager.currentDelayedCount) // Now running the first launch{}'d delay and the final two-second delay
+        assertEquals(2, DetermenisticCoroutineManager.currentDelayedCount) // Now running the first launch{}'d delay and the final two-second delay
         SimHooks.stepTiming(period) // Now it should have activated the count and finished one of the delays
         assertEquals(1, robot.coroutineRunCount)
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount)
         SimHooks.stepTiming(period) // Again, nothing should have changed
         assertEquals(1, robot.coroutineRunCount)
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount)
         SimHooks.stepTiming(period) // All delays should be finished
         assertEquals(1, robot.coroutineRunCount)
-        assertEquals(0, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(0, DetermenisticCoroutineManager.currentDelayedCount)
 
         robot.endCompetition()
         robot.close()
@@ -122,52 +122,52 @@ internal class RobotCoroutineManagerTests {
         Thread(robot::startCompetition).start()
 
         // Run a coroutine and ensure it completes each step in the correct amount of time
-        assertEquals(0, RobotCoroutineManager.currentDelayedCount) // Nothing has happened yet
+        assertEquals(0, DetermenisticCoroutineManager.currentDelayedCount) // Nothing has happened yet
         assertEquals(0, robot.coroutineRunCount)
 
         robot.runSimpleCoroutine(initialDelay = 1.seconds, launchedDelay = 1.seconds, finalDelay = 2.seconds)
 
         assertEquals(0, robot.coroutineRunCount) // Nothing should have happened yet
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount) // The first delay should have started
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount) // The first delay should have started
         SimHooks.stepTiming(1.0)
         assertEquals(0, robot.coroutineRunCount) // Now it should be running the second delay but without activating the count
-        assertEquals(2, RobotCoroutineManager.currentDelayedCount) // Now running the first launch{}'d delay and the final two-second delay
+        assertEquals(2, DetermenisticCoroutineManager.currentDelayedCount) // Now running the first launch{}'d delay and the final two-second delay
 
         robot.runSimpleCoroutine(initialDelay = 0.5.seconds, launchedDelay = 0.2.seconds, finalDelay = 1.2.seconds) // Start another coroutine
 
         // Ensure the new delay has started
         assertEquals(0, robot.coroutineRunCount)
-        assertEquals(3, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(3, DetermenisticCoroutineManager.currentDelayedCount)
 
         SimHooks.stepTiming(0.5)
 
         // Ensure the new coroutine has started it's launched delay and final delay
         assertEquals(0, robot.coroutineRunCount)
-        assertEquals(4, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(4, DetermenisticCoroutineManager.currentDelayedCount)
 
         SimHooks.stepTiming(0.2)
 
         // Ensure the new coroutine has added to the count and finished the first delay
         assertEquals(1, robot.coroutineRunCount)
-        assertEquals(3, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(3, DetermenisticCoroutineManager.currentDelayedCount)
 
         SimHooks.stepTiming(0.8)
 
         // The original coroutine has added to the count and finished it's first delay
         assertEquals(2, robot.coroutineRunCount)
-        assertEquals(2, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(2, DetermenisticCoroutineManager.currentDelayedCount)
 
         SimHooks.stepTiming(0.2)
 
         // The second coroutine has finished entirely
         assertEquals(2, robot.coroutineRunCount)
-        assertEquals(1, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(1, DetermenisticCoroutineManager.currentDelayedCount)
 
         SimHooks.stepTiming(0.8)
 
         // The first coroutine has finished entirely
         assertEquals(2, robot.coroutineRunCount)
-        assertEquals(0, RobotCoroutineManager.currentDelayedCount)
+        assertEquals(0, DetermenisticCoroutineManager.currentDelayedCount)
 
         robot.endCompetition()
         robot.close()

@@ -6,7 +6,7 @@ import java.lang.Runnable
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 
-object RobotCoroutineManager {
+object DetermenisticCoroutineManager {
     private const val MILLISECONDS_TO_MICROSECONDS = 1000
     private const val DEBUG_OUTPUT = false
 
