@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 interface Team8BitRobot {
     val alliance: Alliance?
     val isSimulated: Boolean
+    val isNotSimulated: Boolean get() = !isSimulated
     val mode: Mode
     val coroutineScope: CoroutineScope
 
