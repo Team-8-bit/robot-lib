@@ -1,6 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("edu.wpi.first.GradleRIO").version("2024.3.2")
+    id("com.peterabeles.gversion").version("1.10.3")
 }
 
 group = "org.team9432.lib"
@@ -49,6 +50,16 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+}
+
+project.compileKotlin.dependsOn(createVersionFile)
+gversion {
+    srcDir       = "src/main/kotlin/"
+    classPackage = "org.team9432.lib"
+    className    = "BuildConstants"
+    dateFormat   = "yyyy-MM-dd '@' h:mm:ss a z"
+    timeZone     = "MST"
+    language     = "kotlin"
 }
 
 test {

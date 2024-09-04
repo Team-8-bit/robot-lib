@@ -182,3 +182,5 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
+
+/robot-lib/src/main/kotlin/org/team9432/lib/BuildConstants.kt
