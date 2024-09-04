@@ -4,7 +4,7 @@ import edu.wpi.first.units.Units.Seconds
 import edu.wpi.first.units.Units.Volts
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction
-import org.team9432.lib.doglog.Logger
+import org.littletonrobotics.junction.Logger
 import org.team9432.lib.resource.Action
 import org.team9432.lib.resource.toAction
 import edu.wpi.first.wpilibj2.command.Subsystem as WPISubsystem
@@ -22,7 +22,7 @@ class KSysIdConfig(
     timeout: Double? = null,
 
     /** Method to record the current state for importing into SysId*/
-    recordState: (String) -> Unit = { Logger.log("SysIdState", it) },
+    recordState: (String) -> Unit = { Logger.recordOutput("SysIdState", it) },
 ): SysIdRoutine.Config(
     rampRate?.let { Volts.of(it).per(Seconds.of(1.0)) },
     stepVoltage?.let { Volts.of(it) },

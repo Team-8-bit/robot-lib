@@ -6,7 +6,8 @@ import kotlinx.coroutines.launch
 import org.littletonrobotics.junction.LoggedRobot
 import org.team9432.lib.RobotPeriodicManager
 
-open class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
+
+abstract class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
     final override val isSimulated = isSimulation()
     final override var alliance: DriverStation.Alliance? = null
         private set
@@ -23,6 +24,8 @@ open class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
         }
 
     final override val coroutineScope: CoroutineScope = DetermenisticCoroutineManager.coroutineScope
+
+    final override fun setUseTiming(useTiming: Boolean) = super.setUseTiming(useTiming)
 
     override fun robotPeriodic() {
         DetermenisticCoroutineManager.updateCoroutines()

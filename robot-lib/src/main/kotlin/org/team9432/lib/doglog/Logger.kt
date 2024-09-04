@@ -6,7 +6,7 @@ import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.PowerDistribution
 import org.team9432.lib.Beambreak
 
-object Logger: KDogLog() {
+object DogLog: KDogLog() {
 
     /**
      * Options for configuring DogLog.
