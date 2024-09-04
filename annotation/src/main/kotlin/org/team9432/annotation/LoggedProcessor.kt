@@ -5,13 +5,18 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.validate
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
+import org.littletonrobotics.junction.LogTable
+import org.littletonrobotics.junction.inputs.LoggableInputs
 
 class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor {
-    private val logTableType = ClassName("org.littletonrobotics.junction", "LogTable")
-    private val loggableInputsType = ClassName("org.littletonrobotics.junction.inputs", "LoggableInputs")
+    private val logTableType = LogTable::class
+    private val loggableInputsType = LoggableInputs::class
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val annotatedClasses = resolver.getSymbolsWithAnnotation("org.team9432.annotation.Logged").filterIsInstance<KSClassDeclaration>()
@@ -33,7 +38,6 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
         val fromLogBuilder = FunSpec.builder("fromLog")
             .addModifiers(KModifier.OVERRIDE)
             .addParameter("table", logTableType)
-
 
         classDeclaration.getAllProperties().forEach { property ->
             val simpleName = property.simpleName.asString()
@@ -61,8 +65,11 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator): SymbolProcessor
             .addFunction(fromLogBuilder.build())
 
 
-        val file = FileSpec.builder(packageName, newClassName).addType(type.build()).indent("    ").addImport("org.team9432.lib.advantagekit", listOf("kGet", "kPut")).build()
-        file.writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
+        val file = FileSpec.builder(packageName, newClassName)
+        file.addType(type.build())
+        file.indent("    ")
+        file.addImport(LogTableUtils::class, "kGet", "kPut")
+        file.build().writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
     }
 }
 
