@@ -12,13 +12,18 @@ object Library {
     internal val alliance: DriverStation.Alliance? get() = robot.alliance
 
     /** True if the robot is running in simulation. */
-    internal val isSimulated: Boolean get() = robot.isSimulated
+    internal val isSimulated: Boolean get() = robot.isSimulated && !isReplay
+
+    /** True if the robot is running in simulation. */
+    internal var isReplay: Boolean by Delegates.notNull()
+        private set
 
     /** The [CoroutineScope] of the current robot. */
     internal val coroutineScope: CoroutineScope get() = robot.coroutineScope
 
     /** Initializes the library, some features will not work unless this is called. */
-    fun initialize(robot: Team8BitRobot) {
+    fun initialize(robot: Team8BitRobot, isReplay: Boolean) {
+        this.isReplay = isReplay
         this.robot = robot
     }
 }
