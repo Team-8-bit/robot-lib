@@ -37,7 +37,7 @@ dependencies {
 
     // Vendors
     implementation("edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:$wpiLibVersion")
-    implementation("com.ctre.phoenix6:wpiapi-java:24.2.0")
+    implementation("com.ctre.phoenix6:wpiapi-java:24.3.0")
     implementation("org.photonvision:photonlib-java:v2024.3.1")
     implementation("org.photonvision:photontargeting-java:v2024.3.1")
     implementation("com.revrobotics.frc:REVLib-java:2024.2.1")
