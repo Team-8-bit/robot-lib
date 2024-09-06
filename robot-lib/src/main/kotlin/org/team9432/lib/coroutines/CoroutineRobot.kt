@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.team9432.lib.RobotPeriodicManager
 import org.team9432.lib.coroutines.Team8BitRobot.Mode
-import org.team9432.lib.input.Trigger
 import org.team9432.lib.resource.ActionManager
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.milliseconds

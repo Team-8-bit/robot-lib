@@ -27,6 +27,7 @@ abstract class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
 
     final override fun setUseTiming(useTiming: Boolean) = super.setUseTiming(useTiming)
 
+
     override fun robotPeriodic() {
         DetermenisticCoroutineManager.updateCoroutines()
         DriverStation.getAlliance().ifPresent { alliance = it }
