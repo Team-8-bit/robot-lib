@@ -184,3 +184,4 @@ gradle-app.setting
 *.hprof
 
 /robot-lib/src/main/kotlin/org/team9432/lib/BuildConstants.kt
+/robot-lib/networktables.json
