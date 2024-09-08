@@ -1,6 +1,7 @@
 package org.team9432.lib.constants
 
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Pose3d
 import org.team9432.lib.unit.feet
 import org.team9432.lib.unit.inMeters
 import org.team9432.lib.unit.inches
@@ -18,4 +19,5 @@ object EvergreenFieldConstants {
     val centerX = lengthX / 2
 
     fun Pose2d.isOnField() = (x >= 0 && x <= lengthX.inMeters) && (y >= 0 && y <= lengthY.inMeters)
+    fun Pose3d.isOnField() = (x >= 0 && x <= lengthX.inMeters) && (y >= 0 && y <= lengthY.inMeters)
 }
