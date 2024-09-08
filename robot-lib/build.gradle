@@ -29,6 +29,9 @@ dependencies {
     wpi.sim.enableRelease().forEach { simulationRelease(it) }
 
 
+    // Swerve sim
+    implementation("org.dyn4j:dyn4j:5.0.2")
+
     // AdvantageKit
     implementation("org.littletonrobotics.akit.junction:junction-core:$advantageKitVersion")
     implementation("org.littletonrobotics.akit.junction:wpilib-shim:$advantageKitVersion")

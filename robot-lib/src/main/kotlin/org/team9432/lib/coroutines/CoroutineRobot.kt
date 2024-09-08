@@ -22,6 +22,8 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.milliseconds
 
 open class CoroutineRobot(private val useActionManager: Boolean): RobotBase(), Team8BitRobot {
+    override val periodSeconds = 0.02
+    
     @Volatile
     private var shouldExit = false
 

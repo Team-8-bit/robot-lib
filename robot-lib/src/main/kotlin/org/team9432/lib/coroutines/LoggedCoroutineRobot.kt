@@ -7,10 +7,12 @@ import org.littletonrobotics.junction.LoggedRobot
 import org.team9432.lib.RobotPeriodicManager
 
 
-abstract class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
+abstract class LoggedCoroutineRobot: LoggedRobot(0.02), Team8BitRobot {
     final override val isSimulated = isSimulation()
     final override var alliance: DriverStation.Alliance? = null
         private set
+
+    final override val periodSeconds: Double = super.getPeriod()
 
     final override val mode: Team8BitRobot.Mode
         get() {
@@ -32,10 +34,6 @@ abstract class LoggedCoroutineRobot: LoggedRobot(PERIOD), Team8BitRobot {
         DetermenisticCoroutineManager.updateCoroutines()
         DriverStation.getAlliance().ifPresent { alliance = it }
         RobotPeriodicManager.invokeAll()
-    }
-
-    companion object {
-        const val PERIOD = 0.02
     }
 
     open suspend fun init() {}
