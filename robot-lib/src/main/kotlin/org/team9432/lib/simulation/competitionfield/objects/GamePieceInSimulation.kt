@@ -37,7 +37,7 @@ abstract class GamePieceInSimulation @JvmOverloads constructor(initialPosition: 
          * for convenience, we assume all game pieces have the following properties
          */
         const val DEFAULT_MASS: Double = 0.2
-        const val LINEAR_DAMPING: Double = 2.5
+        const val LINEAR_DAMPING: Double = 5.0
         const val ANGULAR_DAMPING: Double = 5.0
         const val EDGE_COEFFICIENT_OF_FRICTION: Double = 0.8
         const val EDGE_COEFFICIENT_OF_RESTITUTION: Double = 0.3
