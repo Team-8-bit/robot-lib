@@ -102,7 +102,7 @@ open class CoroutineRobot(private val useActionManager: Boolean): RobotBase(), T
                 Mode.TEST -> DriverStationJNI.observeUserProgramTest()
             }
 
-            RobotPeriodicManager.invokeAll()
+            RobotPeriodicManager.invokeAllAndStartNew()
             DriverStation.getAlliance().getOrNull()?.let { alliance = it }
 
             SmartDashboard.updateValues()

@@ -3,6 +3,9 @@ package org.team9432.lib
 object RobotPeriodicManager {
     private val periodics = mutableSetOf<() -> Any>()
 
+    private val periodicsToStart = mutableSetOf<() -> Any>()
+    private val periodicsToStop = mutableSetOf<() -> Any>()
+
     fun startPeriodic(function: RobotPeriodic.() -> Unit): RobotPeriodic {
         val periodic = RobotPeriodic(function)
         periodic.startPeriodic()
@@ -13,13 +16,19 @@ object RobotPeriodicManager {
         val action = { action.invoke(this) }
 
         fun startPeriodic() {
-            periodics.add(action)
+            periodicsToStart.add(action)
         }
 
         fun stopPeriodic() {
-            periodics.remove(action)
+            periodicsToStop.add(action)
         }
     }
 
-    internal fun invokeAll() = periodics.forEach { it.invoke() }
+    internal fun invokeAllAndStartNew() {
+        periodics.addAll(periodicsToStart)
+        periodics.removeAll(periodicsToStop)
+        periodicsToStart.clear()
+        periodicsToStop.clear()
+        periodics.forEach { it.invoke() }
+    }
 }

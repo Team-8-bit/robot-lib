@@ -33,7 +33,7 @@ abstract class LoggedCoroutineRobot: LoggedRobot(0.02), Team8BitRobot {
     override fun robotPeriodic() {
         DetermenisticCoroutineManager.updateCoroutines()
         DriverStation.getAlliance().ifPresent { alliance = it }
-        RobotPeriodicManager.invokeAll()
+        RobotPeriodicManager.invokeAllAndStartNew()
     }
 
     open suspend fun init() {}
