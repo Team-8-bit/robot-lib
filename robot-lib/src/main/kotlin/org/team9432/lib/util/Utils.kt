@@ -11,6 +11,9 @@ fun <T> allianceSwitch(blue: T, red: T): T = if (Library.alliance == DriverStati
 /** Returns either [real] or [sim] depending on if the robot is simulated or not. */
 fun <T> simSwitch(real: T, sim: T): T = if (Library.isSimulated) sim else real
 
+/** Returns either [real] or [sim] depending on if the robot is simulated or not. */
+fun <T> simSwitch(real: () -> T, sim: () -> T): T = if (Library.isSimulated) sim.invoke() else real.invoke()
+
 /** Calls the given block when the robot is running in simulation. */
 fun whenSimulated(block: () -> Unit) {
     if (Library.isSimulated) {
