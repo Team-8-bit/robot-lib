@@ -40,6 +40,9 @@ fun Translation2d.angleTo(pose: Translation2d) = atan2(pose.y - this.y, pose.x -
 /** Returns the angle this pose would need to be at to point at the given pose. */
 fun Pose2d.angleTo(pose: Pose2d) = atan2(pose.y - this.y, pose.x - this.x).radians
 
+/** Returns the angle this pose would need to be at to point at the given pose. */
+fun Pose2d.angleTo(pose: Translation2d) = atan2(pose.y - this.y, pose.x - this.x).radians
+
 /** Returns true if this pose is within [epsilon] of the given pose. */
 fun Translation2d.isNear(pose: Translation2d, epsilon: Length) = hypot(this.x - pose.x, this.y - pose.y) < epsilon.inMeters
 
@@ -51,6 +54,9 @@ fun Translation2d.distanceTo(pose: Translation2d) = this.getDistance(pose).meter
 
 /** Return the distance from this pose to another. */
 fun Pose2d.distanceTo(pose: Pose2d) = this.translation.getDistance(pose.translation).meters
+
+/** Return the distance from this pose to another. */
+fun Pose2d.distanceTo(pose: Translation2d) = this.translation.getDistance(pose).meters
 
 /** Returns a Pose2d at this translation with rotation to point at the given pose. */
 fun Translation2d.pointAt(pose: Translation2d) = Pose2d(x, y, this.angleTo(pose))
