@@ -2,6 +2,7 @@ package org.team9432.lib.dashboard
 
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.networktables.NetworkTableInstance
+import org.littletonrobotics.junction.networktables.LoggedDashboardString
 import org.team9432.lib.RobotPeriodicManager
 
 private const val placeholder: String = "<NA>"
@@ -18,7 +19,7 @@ class SwitchableChooser(name: String) {
     private val defaultPublisher = table.getStringTopic("default").publish()
     private val activePublisher = table.getStringTopic("active").publish()
     private val selectedPublisher = table.getStringTopic("selected").publish()
-    private val selectedInput = table.getStringTopic("selected").subscribe("")
+    private val selectedInput = LoggedDashboardString("$name/selected")
 
     init {
         namePublisher.set(name)
