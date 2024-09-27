@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.geometry.Translation3d
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import org.team9432.lib.constants.EvergreenFieldConstants
 import org.team9432.lib.unit.*
 import kotlin.math.atan2
@@ -63,3 +64,11 @@ fun Translation2d.pointAt(pose: Translation2d) = Pose2d(x, y, this.angleTo(pose)
 
 /** Returns a Pose2d at this translation with rotation to point at the given pose. */
 fun Translation2d.pointAt(pose: Pose2d) = Pose2d(x, y, this.angleTo(pose.translation))
+
+fun Pose2d.transformBySpeeds(speeds: ChassisSpeeds, timeSeconds: Double) = Pose2d(
+    this.x + speeds.vxMetersPerSecond * timeSeconds,
+    this.y + speeds.vyMetersPerSecond * timeSeconds,
+    Rotation2d(
+        this.rotation.radians + speeds.omegaRadiansPerSecond * timeSeconds
+    )
+)
