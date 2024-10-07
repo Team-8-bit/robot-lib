@@ -4,16 +4,11 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.GenericHID
 import kotlinx.coroutines.delay
-import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.withSign
 import kotlin.time.Duration
 
 /** XboxController with Trigger factories for easier command binding. */
 class XboxController(
     port: Int,
-    private val joystickDeadband: Double = 0.15,
-    private val squareJoysticks: Boolean = true,
     private val triggerButtonDistance: Double = 0.2,
 ): GenericHID(port) {
     enum class Button(val value: Int) {
@@ -28,26 +23,19 @@ class XboxController(
         HAL.report(tResourceType.kResourceType_XboxController, port + 1)
     }
 
-    val leftX get() = getRawAxis(Axis.LEFT_X.value).applyDeadband().applySquare()
-    val leftY get() = getRawAxis(Axis.LEFT_Y.value).applyDeadband().applySquare()
-    val rightX get() = getRawAxis(Axis.RIGHT_X.value).applyDeadband().applySquare()
-    val rightY get() = getRawAxis(Axis.RIGHT_Y.value).applyDeadband().applySquare()
+    val leftX get() = getRawAxis(Axis.LEFT_X.value)
+    val leftY get() = getRawAxis(Axis.LEFT_Y.value)
+    val rightX get() = getRawAxis(Axis.RIGHT_X.value)
+    val rightY get() = getRawAxis(Axis.RIGHT_Y.value)
     val leftTriggerAxis get() = getRawAxis(Axis.LEFT_TRIGGER.value)
     val rightTriggerAxis get() = getRawAxis(Axis.RIGHT_TRIGGER.value)
-
-    val leftXRaw get() = getRawAxis(Axis.LEFT_X.value)
-    val leftYRaw get() = getRawAxis(Axis.LEFT_Y.value)
-    val rightXRaw get() = getRawAxis(Axis.RIGHT_X.value)
-    val rightYRaw get() = getRawAxis(Axis.RIGHT_Y.value)
-    val leftTriggerAxisRaw get() = getRawAxis(Axis.LEFT_TRIGGER.value)
-    val rightTriggerAxisRaw get() = getRawAxis(Axis.RIGHT_TRIGGER.value)
 
     val leftBumper get() = Trigger { getRawButton(Button.LEFT_BUMPER.value) }
     val rightBumper get() = Trigger { getRawButton(Button.RIGHT_BUMPER.value) }
     val leftStick get() = Trigger { getRawButton(Button.LEFT_STICK.value) }
     val rightStick get() = Trigger { getRawButton(Button.RIGHT_STICK.value) }
-    val leftTrigger get() = Trigger { leftTriggerAxisRaw > triggerButtonDistance }
-    val rightTrigger get() = Trigger { rightTriggerAxisRaw > triggerButtonDistance }
+    val leftTrigger get() = Trigger { leftTriggerAxis > triggerButtonDistance }
+    val rightTrigger get() = Trigger { rightTriggerAxis > triggerButtonDistance }
     val a get() = Trigger { getRawButton(Button.A.value) }
     val b get() = Trigger { getRawButton(Button.B.value) }
     val x get() = Trigger { getRawButton(Button.X.value) }
@@ -69,7 +57,4 @@ class XboxController(
         delay(duration)
         setRumble(RumbleType.kBothRumble, 0.0)
     }
-
-    private fun Double.applyDeadband() = if (abs(this) > joystickDeadband) this else 0.0
-    private fun Double.applySquare() = if (squareJoysticks) this.pow(2).withSign(this) else this
 }
