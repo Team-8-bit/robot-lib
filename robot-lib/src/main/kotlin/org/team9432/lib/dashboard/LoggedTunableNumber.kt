@@ -11,7 +11,7 @@ import kotlin.reflect.KProperty
  * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or
  * value not in dashboard.
  */
-class LoggedTunableNumber(key: String, private val defaultValue: Double = 0.0): DoubleSupplier {
+class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> Double {
     private var dashboardNumber: LoggedDashboardNumber? = null
     private val lastHasChangedValues: MutableMap<Int, Double> = HashMap()
 
@@ -46,7 +46,7 @@ class LoggedTunableNumber(key: String, private val defaultValue: Double = 0.0): 
         return false
     }
 
-    override fun getAsDouble() = get()
+    override fun invoke() = get()
     operator fun getValue(thisRef: Any?, property: KProperty<*>) = get()
 
     companion object {
