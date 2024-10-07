@@ -19,19 +19,15 @@ import org.team9432.lib.simulation.math.GeometryConvertor
  * this class simulates the physical behavior of all the objects on field
  * should only be created during a robot simulation (not in real or replay mode)
  */
-abstract class CompetitionFieldSimulation(mainRobot: HolonomicChassisSimulation, obstaclesMap: FieldObstaclesMap) {
-    private val physicsWorld: World<Body>
-    val competitionField: CompetitionFieldVisualizer
+abstract class CompetitionFieldSimulation(private val mainRobot: HolonomicChassisSimulation, obstaclesMap: FieldObstaclesMap) {
+    private val physicsWorld: World<Body> = World()
+    val competitionField = CompetitionFieldVisualizer(mainRobot)
     private val robotSimulations: MutableSet<HolonomicChassisSimulation> = HashSet()
-    val mainRobot: HolonomicChassisSimulation
     protected val gamePieces: MutableSet<GamePieceInSimulation>
 
     private val intakeSimulations: MutableList<IntakeSimulation> = ArrayList()
 
     init {
-        this.competitionField = CompetitionFieldVisualizer(mainRobot)
-        this.mainRobot = mainRobot
-        this.physicsWorld = World()
         physicsWorld.setGravity(PhysicsWorld.ZERO_GRAVITY)
         for (obstacle: Body in obstaclesMap.obstacles) physicsWorld.addBody(obstacle)
         this.gamePieces = HashSet()
@@ -123,7 +119,7 @@ abstract class CompetitionFieldSimulation(mainRobot: HolonomicChassisSimulation,
                 )
             )
 
-            obstacle.getTransform().set(GeometryConvertor.toDyn4jTransform(pose))
+            obstacle.transform.set(GeometryConvertor.toDyn4jTransform(pose))
             obstacles.add(obstacle)
         }
 
