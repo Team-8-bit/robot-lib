@@ -6,7 +6,7 @@ import org.team9432.lib.coroutines.Team8BitRobot
 import kotlin.properties.Delegates
 
 object Library {
-    private lateinit var robot: Team8BitRobot
+    lateinit var robot: Team8BitRobot
 
     /** The alliance that the robot is on according to the driver station. Null if not connected. */
     internal val alliance: DriverStation.Alliance? get() = robot.alliance

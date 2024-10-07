@@ -9,6 +9,7 @@ interface Team8BitRobot {
     val mode: Mode
     val coroutineScope: CoroutineScope
     val periodSeconds: Double
+    val tuningMode: Boolean
 
     enum class Runtime {
         REAL, SIM, REPLAY
