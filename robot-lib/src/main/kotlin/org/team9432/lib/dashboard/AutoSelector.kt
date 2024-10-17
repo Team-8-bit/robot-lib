@@ -37,7 +37,7 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
         private data class AutoSelectorQuestion<T>(private val options: AutoSelectorOptionScope<T>, private val onSelect: ((T) -> Unit)?) {
             private var lastValue: T? = null
             fun update(choosers: Queue<DashboardQuestion>) {
-                val newValue = options.update(choosers)?.invoke()
+                val newValue = options.update(choosers)
                 if (lastValue != newValue && newValue != null) {
                     lastValue = newValue
                     onSelect?.invoke(newValue)
@@ -47,14 +47,14 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
     }
 
     class AutoSelectorOptionScope<T> internal constructor(private val question: String) {
-        private val options = mutableMapOf<String, Pair<(() -> T)?, AutoSelectorQuestionScope?>>()
+        private val options = mutableMapOf<String, Pair<T?, AutoSelectorQuestionScope?>>()
 
         /** Add an option to the question, with optional nested questions to show if this option is selected. */
         fun addOption(answer: String, value: (() -> T)? = null, buildQuestions: (AutoSelectorQuestionScope.() -> Unit)? = null) {
-            options[answer] = value to buildQuestions?.let { AutoSelectorQuestionScope().apply(it) }
+            options[answer] = value?.invoke() to buildQuestions?.let { AutoSelectorQuestionScope().apply(it) }
         }
 
-        internal fun update(choosers: Queue<DashboardQuestion>): (() -> T)? {
+        internal fun update(choosers: Queue<DashboardQuestion>): T? {
             // Take a chooser from the list
             // This also removes the chooser so that the same one is never set twice in one loop
             val targetChooser = choosers.poll()
