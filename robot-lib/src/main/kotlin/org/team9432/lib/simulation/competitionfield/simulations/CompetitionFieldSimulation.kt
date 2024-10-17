@@ -9,7 +9,6 @@ import org.dyn4j.geometry.Geometry
 import org.dyn4j.geometry.MassType
 import org.dyn4j.world.PhysicsWorld
 import org.dyn4j.world.World
-import org.team9432.lib.Library
 import org.team9432.lib.simulation.SIMULATION_TICKS_IN_1_PERIOD
 import org.team9432.lib.simulation.competitionfield.CompetitionFieldVisualizer
 import org.team9432.lib.simulation.competitionfield.objects.GamePieceInSimulation
@@ -38,7 +37,7 @@ abstract class CompetitionFieldSimulation(private val mainRobot: HolonomicChassi
 
     fun updateSimulationWorld() {
         competitionPeriodic()
-        val subPeriodSeconds: Double = Library.robotPeriod / SIMULATION_TICKS_IN_1_PERIOD
+        val subPeriodSeconds: Double = 0.02 / SIMULATION_TICKS_IN_1_PERIOD
         // move through 5 sub-periods in each update
         for (i in 0 until SIMULATION_TICKS_IN_1_PERIOD) {
             physicsWorld.step(1, subPeriodSeconds)

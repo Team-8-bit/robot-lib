@@ -1,33 +1,33 @@
 package org.team9432.lib
 
 import edu.wpi.first.wpilibj.DriverStation
-import kotlinx.coroutines.CoroutineScope
-import org.team9432.lib.coroutines.Team8BitRobot
 import kotlin.properties.Delegates
 
 object Library {
-    lateinit var robot: Team8BitRobot
-
     /** The alliance that the robot is on according to the driver station. Null if not connected. */
-    internal val alliance: DriverStation.Alliance? get() = robot.alliance
+    val alliance: DriverStation.Alliance? get() = allianceSupplier.invoke()
+
+    private lateinit var allianceSupplier: () -> DriverStation.Alliance?
 
     /** True if the robot is running in simulation. */
-    internal val isSimulated: Boolean get() = robot.isSimulated && runtime != Team8BitRobot.Runtime.REPLAY
+    internal val isSimulated: Boolean
+        get() = runtime == Runtime.SIM
 
     /** True if the robot is running in simulation. */
-    internal lateinit var runtime: Team8BitRobot.Runtime
+    internal lateinit var runtime: Runtime
         private set
 
-    /** The [CoroutineScope] of the current robot. */
-    internal val coroutineScope: CoroutineScope get() = robot.coroutineScope
-
-    internal var robotPeriod: Double by Delegates.notNull()
+    internal var tuningMode by Delegates.notNull<Boolean>()
         private set
 
     /** Initializes the library, some features will not work unless this is called. */
-    fun initialize(robot: Team8BitRobot, runtime: Team8BitRobot.Runtime) {
+    fun initialize(runtime: Runtime, tuningMode: Boolean, allianceSupplier: () -> DriverStation.Alliance?) {
         this.runtime = runtime
-        this.robot = robot
-        this.robotPeriod = robot.periodSeconds
+        this.tuningMode = tuningMode
+        this.allianceSupplier = allianceSupplier
+    }
+
+    enum class Runtime {
+        REAL, REPLAY, SIM
     }
 }

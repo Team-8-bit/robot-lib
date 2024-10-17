@@ -1,8 +1,9 @@
 package org.team9432.lib.led.management
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.team9432.lib.Library
 
 /** Binds animations to given boolean conditions. Schedules and ends them as needed when [update] is called. */
 class AnimationBindScope private constructor(private val enabled: () -> Boolean) {
@@ -69,6 +70,7 @@ class AnimationBindScope private constructor(private val enabled: () -> Boolean)
     private var lastEnabled: Boolean = false
 
     /** Enabled or disable the animation of this scope. */
+    @OptIn(DelicateCoroutinesApi::class)
     private fun setAnimationState(enabled: Boolean) {
         // Don't run if nothing has changed
         if (lastEnabled == enabled) return
@@ -78,7 +80,7 @@ class AnimationBindScope private constructor(private val enabled: () -> Boolean)
         val animationReference = animation ?: return
 
         if (enabled) {
-            job = Library.coroutineScope.launch {
+            job = scope.launch {
                 animationReference.invoke()
             }
         } else {
@@ -88,6 +90,9 @@ class AnimationBindScope private constructor(private val enabled: () -> Boolean)
     }
 
     companion object {
+        @OptIn(DelicateCoroutinesApi::class)
+        val scope = GlobalScope
+
         /** Starts building a scope, using this as a base case that is always enabled. */
         fun build(bind: AnimationBindScope.() -> Unit): AnimationBindScope {
             val scope = AnimationBindScope { true }

@@ -4,7 +4,6 @@ package org.team9432.lib.dashboard
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber
 import org.team9432.lib.Library
-import java.util.function.DoubleSupplier
 import kotlin.reflect.KProperty
 
 /**
@@ -16,7 +15,7 @@ class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> 
     private val lastHasChangedValues: MutableMap<Int, Double> = HashMap()
 
     init {
-        if (Library.robot.tuningMode) {
+        if (Library.tuningMode) {
             dashboardNumber = LoggedDashboardNumber("$TABLE_KEY/$key", defaultValue)
         }
     }
@@ -26,7 +25,7 @@ class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> 
      *
      * @return The current value
      */
-    fun get() = if (Library.robot.tuningMode) dashboardNumber?.get() ?: defaultValue else defaultValue
+    fun get() = if (Library.tuningMode) dashboardNumber?.get() ?: defaultValue else defaultValue
 
     /**
      * Checks whether the number has changed since our last check
