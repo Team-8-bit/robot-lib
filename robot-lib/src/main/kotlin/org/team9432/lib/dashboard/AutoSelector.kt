@@ -82,12 +82,12 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
     }
 
     data class DashboardQuestion(private val chooserKey: String, private val questionKey: String) {
-        internal val chooser = SwitchableChooser(chooserKey)
+        internal val chooser = SwitchableChooser("AutoSelector/$chooserKey")
 
         internal fun clear() = set("", emptySet())
 
         internal fun set(question: String, options: Collection<String>) {
-            SmartDashboard.putString(questionKey, question)
+            SmartDashboard.putString("AutoSelector/$questionKey", question)
             chooser.setOptions(options.toTypedArray())
         }
     }
