@@ -29,19 +29,21 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
             questions.add(AutoSelectorQuestion(AutoSelectorOptionScope<T>(question).apply(addOptions), onSelect))
         }
 
-        internal fun update(choosers: Queue<DashboardQuestion>) {
-            questions.forEach { it.update(choosers) }
+        // Returns true if something changed
+        internal fun update(choosers: Queue<DashboardQuestion>): Boolean {
+            // This can't be shortened to questions.any {...} because it will stop after the first changed one
+            return questions.map { it.update(choosers) }.any { it }
         }
 
         // This class is needed to retain the type of the question so it can be passed to onSelect()
         private data class AutoSelectorQuestion<T>(private val options: AutoSelectorOptionScope<T>, private val onSelect: ((T) -> Unit)?) {
-            private var lastValue: T? = null
-            fun update(choosers: Queue<DashboardQuestion>) {
-                val newValue = options.update(choosers)?.invoke()
-                if (lastValue != newValue && newValue != null) {
-                    lastValue = newValue
-                    onSelect?.invoke(newValue)
+            // Returns true if something changed
+            fun update(choosers: Queue<DashboardQuestion>): Boolean {
+                val (valueUpdated, newValue) = options.update(choosers)
+                if (valueUpdated && newValue != null) {
+                    onSelect?.invoke(newValue.invoke())
                 }
+                return valueUpdated
             }
         }
     }
@@ -54,7 +56,10 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
             options[answer] = value to buildQuestions?.let { AutoSelectorQuestionScope().apply(it) }
         }
 
-        internal fun update(choosers: Queue<DashboardQuestion>): (() -> T)? {
+        private var lastAnswer: String? = null
+
+        // Returns a boolean signifying if something changed and the selected value
+        internal fun update(choosers: Queue<DashboardQuestion>): Pair<Boolean, (() -> T)?> {
             // Take a chooser from the list
             // This also removes the chooser so that the same one is never set twice in one loop
             val targetChooser = choosers.poll()
@@ -62,22 +67,27 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
             // Display the question and options
             targetChooser.set(question, options.keys)
 
-            // Pass the remaining choosers to any nested questions
             val answer = targetChooser.chooser.get()
-            options[answer]?.second?.update(choosers)
 
-            // Return the selected value
-            return targetChooser.chooser.get()?.let { options[it] }?.first
+            // Pass the remaining choosers to any nested questions
+            val nestedChange = options[answer]?.second?.update(choosers)
+
+            if (answer != lastAnswer || nestedChange == true) {
+                lastAnswer = answer
+                return true to options[answer]?.first
+            } else {
+                return false to options[answer]?.first
+            }
         }
     }
 
     data class DashboardQuestion(private val chooserKey: String, private val questionKey: String) {
-        internal val chooser = SwitchableChooser(chooserKey)
+        internal val chooser = SwitchableChooser("AutoSelector/$chooserKey")
 
         internal fun clear() = set("", emptySet())
 
         internal fun set(question: String, options: Collection<String>) {
-            SmartDashboard.putString(questionKey, question)
+            SmartDashboard.putString("AutoSelector/$questionKey", question)
             chooser.setOptions(options.toTypedArray())
         }
     }

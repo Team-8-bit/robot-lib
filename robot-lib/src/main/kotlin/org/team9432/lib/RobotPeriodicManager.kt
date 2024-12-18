@@ -24,7 +24,7 @@ object RobotPeriodicManager {
         }
     }
 
-    internal fun invokeAllAndStartNew() {
+    fun invokeAllAndStartNew() {
         periodics.addAll(periodicsToStart)
         periodics.removeAll(periodicsToStop)
         periodicsToStart.clear()
