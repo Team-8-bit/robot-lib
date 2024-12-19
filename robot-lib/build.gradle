@@ -1,6 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("edu.wpi.first.GradleRIO").version("2024.3.2")
+    id("edu.wpi.first.GradleRIO").version("2025.1.1-beta-3")
     id("com.peterabeles.gversion").version("1.10.3")
 }
 
@@ -8,10 +8,6 @@ group = "org.team9432.lib"
 
 dependencies {
     def kotlinVersion = project.kotlinVersion
-    def kspVersion = project.kspVersion
-    def wpiLibVersion = project.wpiLibVersion
-    def frcYear = project.frcYear
-    def advantageKitVersion = project.advantageKitVersion
 
     wpi.java.deps.wpilib().forEach { implementation(it) }
     wpi.java.vendor.java().forEach { implementation(it) }
@@ -20,33 +16,18 @@ dependencies {
     wpi.java.vendor.jniDebug(wpi.platforms.desktop).forEach { nativeDebug(it) }
     wpi.sim.enableDebug().forEach { simulationDebug(it) }
 
-    nativeDebug("org.littletonrobotics.akit.conduit:conduit-wpilibio:$advantageKitVersion")
-    nativeRelease("org.littletonrobotics.akit.conduit:conduit-wpilibio:$advantageKitVersion")
+    wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop).forEach { nativeRelease(it) }
+    wpi.java.vendor.jniRelease(wpi.platforms.desktop).forEach { nativeRelease(it) }
 
     wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop).forEach { nativeRelease(it) }
     wpi.java.vendor.jniRelease(wpi.platforms.desktop).forEach { nativeRelease(it) }
+    wpi.sim.enableRelease().forEach { simulationRelease(it) }
 
     wpi.sim.enableRelease().forEach { simulationRelease(it) }
 
 
     // Swerve sim
     implementation("org.dyn4j:dyn4j:5.0.2")
-
-    // AdvantageKit
-    implementation("org.littletonrobotics.akit.junction:junction-core:$advantageKitVersion")
-    implementation("org.littletonrobotics.akit.junction:wpilib-shim:$advantageKitVersion")
-    implementation("org.littletonrobotics.akit.conduit:conduit-api:$advantageKitVersion")
-
-
-    // Vendors
-    implementation("edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:$wpiLibVersion")
-    implementation("com.ctre.phoenix6:wpiapi-java:24.3.0")
-    implementation("org.photonvision:photonlib-java:v2024.3.1")
-    implementation("org.photonvision:photontargeting-java:v2024.3.1")
-    implementation("com.revrobotics.frc:REVLib-java:2024.2.1")
-    implementation("com.github.jonahsnider:doglog:2024.5.8")
-    implementation("com.choreo.lib:ChoreoLib-java:2024.2.3")
-    implementation("com.google.code.gson:gson:2.10.1")
 
     // Misc.
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1-Beta")
@@ -72,14 +53,6 @@ test {
 
 repositories {
     mavenCentral()
-    maven { url = "https://frcmaven.wpi.edu/artifactory/release/" }
-    maven { url = "https://plugins.gradle.org/m2/" }
-    maven { url = "https://maven.ctr-electronics.com/release/" }
-    maven { url = "https://maven.revrobotics.com/" }
-    maven { url = "https://maven.photonvision.org/repository/internal" }
-    maven { url = "https://maven.photonvision.org/repository/snapshots" }
-    maven { url = "https://jitpack.io" }
-    maven { url = "https://SleipnirGroup.github.io/ChoreoLib/dep" }
     maven {
         url = uri("https://maven.pkg.github.com/Mechanical-Advantage/AdvantageKit")
         credentials {
@@ -92,19 +65,8 @@ repositories {
 // Set to true to use debug for JNI.
 wpi.java.debugJni = false
 
-configurations.configureEach {
-    exclude group: "edu.wpi.first.wpilibj"
-}
-
 sourceSets.main {
     java.srcDirs("src/main/kotlin")
 }
-
-tasks.register('checkAkitInstall', JavaExec) {
-    dependsOn "classes"
-    mainClass = "org.littletonrobotics.junction.CheckInstall"
-    classpath = sourceSets.main.runtimeClasspath
-}
-compileKotlin.finalizedBy checkAkitInstall
 
 wpi.java.configureTestTasks(test)

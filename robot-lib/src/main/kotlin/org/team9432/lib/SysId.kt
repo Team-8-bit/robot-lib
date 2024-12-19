@@ -24,7 +24,7 @@ class KSysIdConfig(
     /** Method to record the current state for importing into SysId*/
     recordState: (String) -> Unit = { Logger.recordOutput("SysIdState", it) },
 ): SysIdRoutine.Config(
-    rampRate?.let { Volts.of(it).per(Seconds.of(1.0)) },
+    rampRate?.let { Volts.of(it).per(Seconds) },
     stepVoltage?.let { Volts.of(it) },
     timeout?.let { Seconds.of(it) },
     { state -> recordState.invoke(state.toString()) }
