@@ -6,8 +6,6 @@ plugins {
 group = "org.team9432.lib"
 
 dependencies {
-    def kotlinVersion = project.kotlinVersion
-
     wpi.java.deps.wpilib().forEach { implementation(it) }
     wpi.java.vendor.java().forEach { implementation(it) }
 
@@ -25,13 +23,9 @@ dependencies {
     wpi.sim.enableRelease().forEach { simulationRelease(it) }
 
     // Misc.
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1-Beta")
     implementation("com.squareup:kotlinpoet:1.14.2")
     implementation("com.squareup:kotlinpoet-ksp:1.14.2")
     implementation("com.google.devtools.ksp:symbol-processing-api:$kspVersion")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }
 
 test {

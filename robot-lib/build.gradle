@@ -7,8 +7,6 @@ plugins {
 group = "org.team9432.lib"
 
 dependencies {
-    def kotlinVersion = project.kotlinVersion
-
     wpi.java.deps.wpilib().forEach { implementation(it) }
     wpi.java.vendor.java().forEach { implementation(it) }
 
@@ -24,12 +22,6 @@ dependencies {
     wpi.sim.enableRelease().forEach { simulationRelease(it) }
 
     wpi.sim.enableRelease().forEach { simulationRelease(it) }
-
-    // Misc.
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1-Beta")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }
 
 project.compileKotlin.dependsOn(createVersionFile)

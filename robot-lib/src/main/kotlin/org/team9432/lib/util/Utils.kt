@@ -1,7 +1,7 @@
 package org.team9432.lib.util
 
 import edu.wpi.first.wpilibj.DriverStation
-import kotlinx.coroutines.delay
+import edu.wpi.first.wpilibj.Timer.delay
 import org.team9432.lib.Library
 import kotlin.time.Duration
 
@@ -18,20 +18,6 @@ fun <T> simSwitch(real: () -> T, sim: () -> T): T = if (Library.isSimulated) sim
 fun whenSimulated(block: () -> Unit) {
     if (Library.isSimulated) {
         block.invoke()
-    }
-}
-
-/** Calls the given block when the robot is running in simulation. */
-suspend fun whenSimulatedSuspend(block: suspend () -> Unit) {
-    if (Library.isSimulated) {
-        block.invoke()
-    }
-}
-
-/** Delays for the given duration when the robot is running in simulation. */
-suspend fun simDelay(duration: Duration) {
-    if (Library.isSimulated) {
-        delay(duration)
     }
 }
 
