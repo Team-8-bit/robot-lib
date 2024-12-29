@@ -2,9 +2,7 @@ package org.team9432.lib.constants
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Pose3d
-import org.team9432.lib.unit.feet
-import org.team9432.lib.unit.inMeters
-import org.team9432.lib.unit.inches
+import edu.wpi.first.math.util.Units
 
 /**
  * - Robot rotation is always 0 degrees when the front of the robot is facing the red alliance wall
@@ -13,11 +11,11 @@ import org.team9432.lib.unit.inches
  * - +y is towards the left side of the field (again standing behind the blue driver station)
  */
 object EvergreenFieldConstants {
-    val lengthY = 26.0.feet + 11.25.inches
-    val lengthX = 54.0.feet + 3.25.inches
-    val centerY = lengthY / 2
-    val centerX = lengthX / 2
+    val lengthY = Units.feetToMeters(26.0) + Units.inchesToMeters(11.25)
+    val lengthX = Units.feetToMeters(54.0) + Units.inchesToMeters(3.25)
+    val centerY = lengthY / 2.0
+    val centerX = lengthX / 2.0
 
-    fun Pose2d.isOnField() = (x >= 0 && x <= lengthX.inMeters) && (y >= 0 && y <= lengthY.inMeters)
-    fun Pose3d.isOnField() = (x >= 0 && x <= lengthX.inMeters) && (y >= 0 && y <= lengthY.inMeters)
+    fun Pose2d.isOnField() = (x in 0.0..lengthX) && (y in 0.0..lengthY)
+    fun Pose3d.isOnField() = (x in 0.0..lengthX) && (y in 0.0..lengthY)
 }
