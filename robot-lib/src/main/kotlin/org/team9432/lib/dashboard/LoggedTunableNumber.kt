@@ -3,7 +3,6 @@
 package org.team9432.lib.dashboard
 
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber
-import org.team9432.lib.Library
 import kotlin.reflect.KProperty
 
 /**
@@ -15,7 +14,7 @@ class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> 
     private val lastHasChangedValues: MutableMap<Int, Double> = HashMap()
 
     init {
-        if (Library.tuningMode) {
+        if (isTuningMode) {
             dashboardNumber = LoggedNetworkNumber("$TABLE_KEY/$key", defaultValue)
         }
     }
@@ -25,7 +24,7 @@ class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> 
      *
      * @return The current value
      */
-    fun get() = if (Library.tuningMode) dashboardNumber?.get() ?: defaultValue else defaultValue
+    fun get() = if (isTuningMode) dashboardNumber?.get() ?: defaultValue else defaultValue
 
     /**
      * Checks whether the number has changed since our last check
@@ -49,6 +48,22 @@ class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> 
     operator fun getValue(thisRef: Any?, property: KProperty<*>) = get()
 
     companion object {
+        private var isTuningMode = false
+
+        /**
+         * Sets if tuning mode should be enabled. In tuning mode all [LoggedTunableNumber]s
+         * will be displayed on the dashboard and robot code will listen to changes. If
+         * tuning mode is disabled the code will use the default values provided (recommended
+         * for competitions).
+         */
+        fun setTuningModeEnabled(enabled: Boolean) {
+            isTuningMode = enabled
+        }
+
+        fun isTuningModeEnabled(): Boolean {
+            return isTuningMode
+        }
+
         private const val TABLE_KEY = "TunableNumbers"
 
         /**
@@ -61,6 +76,7 @@ class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> 
          * @param tunableNumbers All tunable numbers to check
          */
         fun ifChanged(id: Int, vararg tunableNumbers: LoggedTunableNumber, action: (List<Double>) -> Unit) {
+            if (!isTuningMode) return
             if (tunableNumbers.any { it.hasChanged(id) }) {
                 action.invoke(tunableNumbers.map { it.get() })
             }
