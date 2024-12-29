@@ -33,17 +33,4 @@ object SwerveUtil {
             )
         }
     }
-
-    /** Returns an array of [Translation2d] of Mk4i swerve module positions given a frame size. Useful for WPILib odometry classes. */
-    fun getMk4iModuleTranslations(frameSizeInches: Double): Array<Translation2d> {
-        val distanceFromCenterXY = (frameSizeInches / 2) - 2.625
-        val distanceInches = hypot(distanceFromCenterXY, distanceFromCenterXY)
-        val moduleDistance = Units.inchesToMeters(distanceInches)
-
-        val frontLeft = Translation2d(moduleDistance, moduleDistance)
-        val frontRight = Translation2d(moduleDistance, -moduleDistance)
-        val backLeft = Translation2d(-moduleDistance, moduleDistance)
-        val backRight = Translation2d(-moduleDistance, -moduleDistance)
-        return arrayOf(frontLeft, frontRight, backLeft, backRight)
-    }
 }
