@@ -82,7 +82,8 @@ class AutoSelector(private val choosers: Set<DashboardQuestion>, buildQuestions:
     }
 
     data class DashboardQuestion(private val chooserKey: String, private val questionKey: String) {
-        internal val chooser = SwitchableChooser("AutoSelector/$chooserKey")
+        // The leading '/' before "AutoSelector" is needed for this to work: https://discord.com/channels/176186766946992128/528555967827148801/1322768035198795836 (read up for the problem)
+        internal val chooser = SwitchableChooser("/AutoSelector", chooserKey)
 
         internal fun clear() = set("", emptySet())
 

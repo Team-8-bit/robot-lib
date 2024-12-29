@@ -2,24 +2,23 @@ package org.team9432.lib.dashboard
 
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.networktables.NetworkTableInstance
-import org.littletonrobotics.junction.networktables.LoggedDashboardString
+import org.littletonrobotics.junction.networktables.LoggedNetworkString
 import org.team9432.lib.RobotPeriodicManager
 
-private const val placeholder: String = "<NA>"
+private const val PLACEHOLDER: String = "<NA>"
 
 // https://github.com/Mechanical-Advantage/RobotCode2024/blob/main/src/main/java/org/littletonrobotics/frc2024/util/SwitchableChooser.java
-class SwitchableChooser(name: String) {
-    private var options = arrayOf(placeholder)
-    private var active: String? = placeholder
+class SwitchableChooser(tablePath: String, name: String) {
+    private var options = arrayOf(PLACEHOLDER)
+    private var active: String? = PLACEHOLDER
 
-    private val table: NetworkTable = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable(name)
+    private val table: NetworkTable = NetworkTableInstance.getDefault().getTable(tablePath).getSubTable(name)
     private val namePublisher = table.getStringTopic(".name").publish()
     private val typePublisher = table.getStringTopic(".type").publish()
     private val optionsPublisher = table.getStringArrayTopic("options").publish()
     private val defaultPublisher = table.getStringTopic("default").publish()
     private val activePublisher = table.getStringTopic("active").publish()
-    private val selectedPublisher = table.getStringTopic("selected").publish()
-    private val selectedInput = LoggedDashboardString("$name/selected")
+    private val selectedInput = LoggedNetworkString("$tablePath/$name/selected")
 
     init {
         namePublisher.set(name)
@@ -27,7 +26,7 @@ class SwitchableChooser(name: String) {
         optionsPublisher.set(this.options)
         defaultPublisher.set(this.options.first())
         activePublisher.set(this.options.first())
-        selectedPublisher.set(this.options.first())
+        selectedInput.set(this.options.first())
 
         RobotPeriodicManager.startPeriodic { periodic() }
     }
@@ -35,22 +34,22 @@ class SwitchableChooser(name: String) {
     /** Updates the set of available options.  */
     fun setOptions(options: Array<String>) {
         if (options.contentEquals(this.options)) return
-        this.options = if (options.isNotEmpty()) options else arrayOf(placeholder)
+        this.options = if (options.isNotEmpty()) options else arrayOf(PLACEHOLDER)
         optionsPublisher.set(this.options)
         periodic()
     }
 
     /** Returns the selected option.  */
-    fun get(): String? = if (active == placeholder) null else active
+    fun get(): String? = if (active == PLACEHOLDER) null else active
 
     private fun periodic() {
         val selected = selectedInput.get()
 
-        active = options.firstOrNull { it != placeholder && it == selected }
+        active = options.firstOrNull { it != PLACEHOLDER && it == selected }
 
         if (active == null) {
             active = options.first()
-            selectedPublisher.set(active)
+            selectedInput.set(active)
         }
 
         defaultPublisher.set(active)

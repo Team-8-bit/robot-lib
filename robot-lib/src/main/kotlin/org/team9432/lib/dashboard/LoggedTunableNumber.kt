@@ -2,7 +2,7 @@
 // https://github.com/Mechanical-Advantage/RobotCode2024/blob/a025615a52193b7709db7cf14c51c57be17826f2/src/main/java/org/littletonrobotics/frc2024/subsystems/drive/Drive.java
 package org.team9432.lib.dashboard
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardNumber
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber
 import org.team9432.lib.Library
 import kotlin.reflect.KProperty
 
@@ -11,12 +11,12 @@ import kotlin.reflect.KProperty
  * value not in dashboard.
  */
 class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> Double {
-    private var dashboardNumber: LoggedDashboardNumber? = null
+    private var dashboardNumber: LoggedNetworkNumber? = null
     private val lastHasChangedValues: MutableMap<Int, Double> = HashMap()
 
     init {
         if (Library.tuningMode) {
-            dashboardNumber = LoggedDashboardNumber("$TABLE_KEY/$key", defaultValue)
+            dashboardNumber = LoggedNetworkNumber("$TABLE_KEY/$key", defaultValue)
         }
     }
 
@@ -60,7 +60,7 @@ class LoggedTunableNumber(key: String, private val defaultValue: Double): () -> 
          * numbers in order inputted in method
          * @param tunableNumbers All tunable numbers to check
          */
-        fun ifChanged(id: Int, action: (List<Double>) -> Unit, vararg tunableNumbers: LoggedTunableNumber) {
+        fun ifChanged(id: Int, vararg tunableNumbers: LoggedTunableNumber, action: (List<Double>) -> Unit) {
             if (tunableNumbers.any { it.hasChanged(id) }) {
                 action.invoke(tunableNumbers.map { it.get() })
             }
