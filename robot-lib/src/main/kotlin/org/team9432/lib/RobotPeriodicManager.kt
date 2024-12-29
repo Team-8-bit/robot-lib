@@ -3,32 +3,18 @@ package org.team9432.lib
 object RobotPeriodicManager {
     private val periodics = mutableSetOf<() -> Any>()
 
+    // Have an intermediate list to prevent modifying the main one while it's being iterated through
     private val periodicsToStart = mutableSetOf<() -> Any>()
-    private val periodicsToStop = mutableSetOf<() -> Any>()
 
-    fun startPeriodic(function: RobotPeriodic.() -> Unit): RobotPeriodic {
-        val periodic = RobotPeriodic(function)
-        periodic.startPeriodic()
-        return periodic
+    fun startPeriodic(function: () -> Any) {
+        periodicsToStart.add(function)
     }
 
-    class RobotPeriodic(action: RobotPeriodic.() -> Unit) {
-        val action = { action.invoke(this) }
-
-        fun startPeriodic() {
-            periodicsToStart.add(action)
-        }
-
-        fun stopPeriodic() {
-            periodicsToStop.add(action)
-        }
-    }
-
-    fun invokeAllAndStartNew() {
+    fun invokeAll() {
+        // Add all newly scheduled periodics
         periodics.addAll(periodicsToStart)
-        periodics.removeAll(periodicsToStop)
         periodicsToStart.clear()
-        periodicsToStop.clear()
+        // Invoke periodics
         periodics.forEach { it.invoke() }
     }
 }
