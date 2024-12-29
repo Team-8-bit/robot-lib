@@ -1,6 +1,11 @@
 # robot-lib
 
 ---
+
+
+> [!WARNING]  
+> This project is no longer in use, see our 2025 robot code for the latest version!
+
 _Team 9432's library code for use in all seasons._
 
 ## Projects
